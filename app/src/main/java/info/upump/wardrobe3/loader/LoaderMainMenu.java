@@ -1,4 +1,4 @@
-package info.upump.wardrobe3.db.loader;
+package info.upump.wardrobe3.loader;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -36,6 +36,7 @@ public class LoaderMainMenu extends AsyncTaskLoader<List<MainMenuItem>> {
                 list.add(mainMenuItem);
             }while (cursor.moveToNext());
         }
+
 
 
         return list;

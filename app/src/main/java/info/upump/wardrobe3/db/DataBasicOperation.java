@@ -10,4 +10,6 @@ import android.database.Cursor;
 public interface DataBasicOperation<T> {
     Long save(T item);
     Cursor getAll();
+    Long delete(T item);
+    Long update(T item);
 }
