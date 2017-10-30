@@ -16,11 +16,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import info.upump.wardrobe3.dialog.MainItemAddDialog;
+import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsynck;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, Datable {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private FragmentTransaction fragmentTransaction;
     private Fragment fragment;
     private String fragmentTag;
@@ -116,11 +116,11 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentTag) {
             case MainFragment.TAG:
-                DialogFragment dialogFragment = new MainItemAddDialog();
+                DialogFragment dialogFragment = new MainItemDialog();
                 Bundle bundle = new Bundle();
                 bundle.putInt("operation", MainItemOperationAsynck.SAVE);
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show(getFragmentManager(), MainItemAddDialog.TAG);
+                dialogFragment.show(getFragmentManager(), MainItemDialog.TAG);
 
                 Snackbar.make(v, "это фаб", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -130,12 +130,4 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void notifyCnangeAdapterItems() {
-        if(fragmentTag.equals(MainFragment.TAG)){
-            (( MainFragment) fragment).getLoaderManager().getLoader(0).forceLoad();
-            System.out.println("обноление адаптера");
-        }
-
-    }
 }

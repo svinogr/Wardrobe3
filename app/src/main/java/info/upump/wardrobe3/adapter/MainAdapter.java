@@ -9,14 +9,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.dialog.MainItemAddDialog;
+import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsynck;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.MainMenuViewHolder;
+import info.upump.wardrobe3.model.SubItem;
 
 /**
  * Created by explo on 29.10.2017.
@@ -36,6 +39,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_main_menu, parent, false);
+        SwipeLayout swipeLayout =  (SwipeLayout)view.findViewById(R.id.swap);
+        swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
         return new MainMenuViewHolder(view);
     }
 
@@ -46,6 +51,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             @Override
             public void onClick(View v) {
                 System.out.println(mainMenuItemList.get(position).getName());
+                //TODO переход на новый фрагмент
             }
         });
         mHolder.position =  position;
@@ -77,15 +83,14 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  
             @Override
             public void onClick(View v) {
                MainMenuItem mainMenuItem = mainMenuItemList.get(position);
-                DialogFragment dialogFragment = new MainItemAddDialog();
+                DialogFragment dialogFragment = new MainItemDialog();
                 Bundle bundle = new Bundle();
                 bundle.putInt("operation",MainItemOperationAsynck.UPDATE);
                 bundle.putLong("id", mainMenuItem.getId());
                 bundle.putString("name",  mainMenuItem.getName());
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show(activity.getFragmentManager(), MainItemAddDialog.TAG);
-                //сделдать изменение
-             //   notifyDataSetChanged();
+                dialogFragment.show(activity.getFragmentManager(), MainItemDialog.TAG);
+
             }
         });
 

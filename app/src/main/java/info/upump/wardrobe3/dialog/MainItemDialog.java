@@ -11,33 +11,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import info.upump.wardrobe3.Datable;
+import info.upump.wardrobe3.MainActivity;
+import info.upump.wardrobe3.MainFragment;
 import info.upump.wardrobe3.R;
+import info.upump.wardrobe3.adapter.MainAdapter;
 import info.upump.wardrobe3.model.MainMenuItem;
 
 /**
  * Created by explo on 29.10.2017.
  */
 
-public class MainItemAddDialog extends DialogFragment {
+public class MainItemDialog extends DialogFragment {
     public EditText textNameItem;
     public static final String TAG = "dialogMain";
-    private int operation;
+    private MainFragment fromFragment;
     private AlertDialog.Builder builder;
-    private Bundle bundle;
+    private List<MainMenuItem> mainMenuItemList;
+    private MainAdapter mainAdapter;
 
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        System.out.println("onAttach");
+
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Bundle bundle =savedInstanceState;
-        operation = getArguments().getInt("operation");
+        System.out.println("onCreateDialog");
+
+        int operation = getArguments().getInt("operation");
 
         builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
@@ -59,6 +66,8 @@ public class MainItemAddDialog extends DialogFragment {
     }
 
     private AlertDialog.Builder createUpdateDialog() {
+        System.out.println("createUpdateDialog");
+
         textNameItem.setText(getArguments().getString("name"));
         builder.setMessage("Введите название ящика").
                 setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
@@ -66,7 +75,7 @@ public class MainItemAddDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("YES", "YES");
                         Log.d(textNameItem.getText().toString(), "deded");
-
+                        initContainerForNotify();
                         if (textNameItem.getText().toString().equals("")) {
                             return;
                         }
@@ -88,11 +97,17 @@ public class MainItemAddDialog extends DialogFragment {
                             resultAdding = false;
                         }
                         if (resultAdding == true) {
+                            System.out.println("ссылка равна на фраг " + fromFragment == null);
 
-                            Datable activity = (Datable) getActivity();
-                            //     System.out.println(activity.);
-                            activity.notifyCnangeAdapterItems();
-
+                            if (mainMenuItemList != null) {
+                                for (MainMenuItem m : mainMenuItemList) {
+                                    if (m.getId() == mainMenuItem.getId()) {
+                                        m.setName(mainMenuItem.getName());
+                                    }
+                                }
+                                mainAdapter.notifyDataSetChanged();
+                                System.out.println("обновили адаптер");
+                            }
                         }
                     }
                 })
@@ -107,12 +122,14 @@ public class MainItemAddDialog extends DialogFragment {
     }
 
     private AlertDialog.Builder createSaveDialog() {
+        System.out.println("createUpdateDialog");
         builder.setMessage("Введите название ящика").
                 setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("YES", "YES");
                         Log.d(textNameItem.getText().toString(), "deded");
+                        initContainerForNotify();
 
                         if (textNameItem.getText().toString().equals("")) {
                             return;
@@ -134,10 +151,11 @@ public class MainItemAddDialog extends DialogFragment {
                             resultAdding = false;
                         }
                         if (resultAdding == true) {
-
-                            Datable activity = (Datable) getActivity();
-                            //     System.out.println(activity.);
-                            activity.notifyCnangeAdapterItems();
+                            if (mainMenuItemList != null) {
+                                mainMenuItemList.add(mainMenuItem);
+                                mainAdapter.notifyDataSetChanged();
+                                System.out.println("обновили адаптер");
+                            }
 
                         }
                     }
@@ -150,6 +168,15 @@ public class MainItemAddDialog extends DialogFragment {
                 });
 
         return builder;
+
+    }
+
+    private void initContainerForNotify() {
+        MainActivity activity = (MainActivity) getActivity();
+        fromFragment = (MainFragment) activity.getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
+        System.out.println(fromFragment == null);
+        mainMenuItemList = fromFragment.getMainMenuItemList();
+        mainAdapter = fromFragment.getMainAdapter();
 
     }
 

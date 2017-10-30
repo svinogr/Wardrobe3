@@ -1,13 +1,16 @@
 package info.upump.wardrobe3.model;
 
+import java.util.List;
+
 /**
  * Created by explo on 26.10.2017.
  */
 
 public class MainMenuItem {
-    private long id;
-    private String name;
-    private String img;
+    protected long id;
+    protected String name;
+    protected String img;
+    private List<SubItem> subItems;
 
     public MainMenuItem() {
     }
@@ -36,6 +39,13 @@ public class MainMenuItem {
         this.img = img;
     }
 
+    public List<SubItem> getSubItems() {
+        return subItems;
+    }
+
+    public void setSubItems(List<SubItem> subItems) {
+        this.subItems = subItems;
+    }
 
     @Override
     public boolean equals(Object o) {

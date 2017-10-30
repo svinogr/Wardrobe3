@@ -34,6 +34,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        System.out.println("onCreateView-Main");
+        setRetainInstance(true);
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
@@ -64,6 +66,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoadFinished(Loader<List<MainMenuItem>> loader, List<MainMenuItem> data) {
+        System.out.println("onLoadFinished-Main");
         mainMenuItemList.clear();
         mainMenuItemList.addAll(data);
         mainAdapter.notifyDataSetChanged();
@@ -77,5 +80,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     public MainAdapter getMainAdapter() {
         return mainAdapter;
+    }
+
+    public List<MainMenuItem> getMainMenuItemList() {
+        return mainMenuItemList;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }
