@@ -16,11 +16,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
 import info.upump.wardrobe3.dialog.MainItemDialog;
-import info.upump.wardrobe3.dialog.MainItemOperationAsynck;
+import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, FragmentController {
     private FragmentTransaction fragmentTransaction;
     private Fragment fragment;
     private String fragmentTag;
@@ -112,13 +114,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        // addItem();
-
+        Fragment currentFragment = getCurrentFragment();
+        fragmentTag = currentFragment.getTag();
         switch (fragmentTag) {
             case MainFragment.TAG:
                 DialogFragment dialogFragment = new MainItemDialog();
                 Bundle bundle = new Bundle();
-                bundle.putInt("operation", MainItemOperationAsynck.SAVE);
+                bundle.putInt("operation", MainItemOperationAsync.SAVE);
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(getFragmentManager(), MainItemDialog.TAG);
 
@@ -130,4 +132,21 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    @Override
+    public Fragment getCurrentFragment()  {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        Fragment fragment=null;
+        System.out.println(fragments.size());
+        for (Fragment f : fragments) {
+            if (f != null) {
+                if (f.isResumed()) {
+                    System.out.println("текущ " + f.getTag());
+                    fragment = f;
+
+                }
+            }
+        }
+
+        return fragment;
+    }
 }

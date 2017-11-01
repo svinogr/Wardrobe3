@@ -11,13 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import info.upump.wardrobe3.MainActivity;
-import info.upump.wardrobe3.MainFragment;
+import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.adapter.MainAdapter;
+import info.upump.wardrobe3.ViewFragmentController;
 import info.upump.wardrobe3.model.MainMenuItem;
 
 /**
@@ -27,10 +23,7 @@ import info.upump.wardrobe3.model.MainMenuItem;
 public class MainItemDialog extends DialogFragment {
     public EditText textNameItem;
     public static final String TAG = "dialogMain";
-    private MainFragment fromFragment;
     private AlertDialog.Builder builder;
-    private List<MainMenuItem> mainMenuItemList;
-    private MainAdapter mainAdapter;
 
 
     @Override
@@ -54,10 +47,10 @@ public class MainItemDialog extends DialogFragment {
         builder.setView(inflate);
 
         switch (operation) {
-            case MainItemOperationAsynck.SAVE:
+            case MainItemOperationAsync.SAVE:
                 builder = createSaveDialog();
                 break;
-            case MainItemOperationAsynck.UPDATE:
+            case MainItemOperationAsync.UPDATE:
                 builder = createUpdateDialog();
                 break;
         }
@@ -67,51 +60,24 @@ public class MainItemDialog extends DialogFragment {
 
     private AlertDialog.Builder createUpdateDialog() {
         System.out.println("createUpdateDialog");
-
         textNameItem.setText(getArguments().getString("name"));
-        builder.setMessage("Введите название ящика").
-                setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.title_dialog_update_main_item).
+                setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("YES", "YES");
-                        Log.d(textNameItem.getText().toString(), "deded");
-                        initContainerForNotify();
                         if (textNameItem.getText().toString().equals("")) {
                             return;
                         }
-
-                        Boolean resultAdding = false;
-
                         MainMenuItem mainMenuItem = new MainMenuItem();
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
 
-                        MainItemOperationAsynck addItemAsynck = new MainItemOperationAsynck(getActivity(), MainItemOperationAsynck.UPDATE);
-                        addItemAsynck.execute(mainMenuItem);
-                        try {
-                            resultAdding = addItemAsynck.get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                            resultAdding = false;
-                        }
-                        if (resultAdding == true) {
-                            System.out.println("ссылка равна на фраг " + fromFragment == null);
+                        ViewFragmentController viewFragmentController = getViewFragmentController();
+                        viewFragmentController.updateItem(mainMenuItem);
 
-                            if (mainMenuItemList != null) {
-                                for (MainMenuItem m : mainMenuItemList) {
-                                    if (m.getId() == mainMenuItem.getId()) {
-                                        m.setName(mainMenuItem.getName());
-                                    }
-                                }
-                                mainAdapter.notifyDataSetChanged();
-                                System.out.println("обновили адаптер");
-                            }
-                        }
                     }
                 })
-                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
@@ -123,62 +89,37 @@ public class MainItemDialog extends DialogFragment {
 
     private AlertDialog.Builder createSaveDialog() {
         System.out.println("createUpdateDialog");
-        builder.setMessage("Введите название ящика").
-                setPositiveButton("Сохранить", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d("YES", "YES");
-                        Log.d(textNameItem.getText().toString(), "deded");
-                        initContainerForNotify();
+        builder.setTitle(R.string.title_dialog_new_main_item);
+        builder.setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (textNameItem.getText().toString().equals("")) {
 
-                        if (textNameItem.getText().toString().equals("")) {
-                            return;
-                        }
+                    return;
+                }
+                String nameOfNewItem = textNameItem.getText().toString();
 
-                        Boolean resultAdding = false;
+                MainMenuItem mainMenuItem = new MainMenuItem();
+                mainMenuItem.setName(nameOfNewItem);
 
-                        MainMenuItem mainMenuItem = new MainMenuItem();
-                        mainMenuItem.setName(textNameItem.getText().toString());
-
-                        MainItemOperationAsynck addItemAsynck = new MainItemOperationAsynck(getActivity(), MainItemOperationAsynck.SAVE);
-                        addItemAsynck.execute(mainMenuItem);
-                        try {
-                            resultAdding = addItemAsynck.get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                            resultAdding = false;
-                        }
-                        if (resultAdding == true) {
-                            if (mainMenuItemList != null) {
-                                mainMenuItemList.add(mainMenuItem);
-                                mainAdapter.notifyDataSetChanged();
-                                System.out.println("обновили адаптер");
-                            }
-
-                        }
-                    }
-                })
-                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.d("No", "No");
-                    }
-                });
+                ViewFragmentController viewFragmentController = getViewFragmentController();
+                viewFragmentController.addNewItem(mainMenuItem);
+            }
+        });
+        builder.setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("No", "No");
+            }
+        });
 
         return builder;
 
     }
 
-    private void initContainerForNotify() {
-        MainActivity activity = (MainActivity) getActivity();
-        fromFragment = (MainFragment) activity.getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
-        System.out.println(fromFragment == null);
-        mainMenuItemList = fromFragment.getMainMenuItemList();
-        mainAdapter = fromFragment.getMainAdapter();
-
+    private ViewFragmentController getViewFragmentController() {
+        FragmentController fragmentController = (FragmentController) getActivity();
+        return (ViewFragmentController) fragmentController.getCurrentFragment();
     }
-
 
 }

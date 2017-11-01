@@ -7,15 +7,17 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.adapter.MainAdapter;
+import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
 import info.upump.wardrobe3.model.MainMenuItem;
 
@@ -23,11 +25,13 @@ import info.upump.wardrobe3.model.MainMenuItem;
  * Created by explo on 26.10.2017.
  */
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<MainMenuItem>> {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<MainMenuItem>>, ViewFragmentController<MainMenuItem> {
     private List<MainMenuItem> mainMenuItemList = new ArrayList<>();
     private RecyclerView recyclerView;
-    private MainAdapter mainAdapter;
+    private RecyclerView.Adapter mainAdapter;
     public static final String TAG = "mainFragment";
+    private MainMenuItem tempMainItem;
+    private int temPositionMainItem;
 
 
     @Nullable
@@ -36,18 +40,46 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         System.out.println("onCreateView-Main");
         setRetainInstance(true);
+
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
-        mainAdapter = new MainAdapter(mainMenuItemList,getActivity());
+        mainAdapter = new MainAdapter(mainMenuItemList, getActivity());
+        //mainAdapter = new MainAdapterWithSwipeLayout(mainMenuItemList,getActivity());
 
         recyclerView = root.findViewById(R.id.recycledFragmentMain);
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
         recyclerView.setAdapter(mainAdapter);
-
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createItemTouchHelperCallback());
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         return root;
+    }
+
+    private ItemTouchHelper.Callback createItemTouchHelperCallback() {
+        ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                switch (direction) {
+                    case 8:
+                        break;
+                    case 4:
+                        temPositionMainItem = viewHolder.getAdapterPosition();
+                        tempMainItem = mainMenuItemList.get(temPositionMainItem);
+                        deleteItem(tempMainItem);
+                        break;
+                }
+
+            }
+        };
+        return callback;
     }
 
     @Override
@@ -78,7 +110,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     }
 
-    public MainAdapter getMainAdapter() {
+    public RecyclerView.Adapter getMainAdapter() {
         return mainAdapter;
     }
 
@@ -90,4 +122,108 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
+
+    @Override
+    public void addNewItem(MainMenuItem object) {
+        MainItemOperationAsync addItemAsync = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.SAVE);
+        addItemAsync.execute(object);
+        long resultAdding = 0;
+        try {
+            resultAdding = addItemAsync.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            resultAdding = 0;
+        }
+        if (resultAdding > 0) {
+            if (mainMenuItemList != null) {
+                object.setId(resultAdding);
+                mainMenuItemList.add(object);
+                int endOdList = mainMenuItemList.size() - 1;
+                mainAdapter.notifyItemInserted(endOdList);
+                recyclerView.smoothScrollToPosition(endOdList);
+                System.out.println("обновили адаптер");
+
+            }
+
+        }
+
+    }
+
+    @Override
+    public void updateItem(MainMenuItem object) {
+
+        MainItemOperationAsync addItemAsynck = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.UPDATE);
+        addItemAsynck.execute(object);
+        long resultupdate = 0;
+        try {
+            resultupdate = addItemAsynck.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            resultupdate = 0;
+        }
+        if (resultupdate > 0) {
+            if (mainMenuItemList != null) {
+                int index;
+                for (MainMenuItem m : mainMenuItemList) {
+                    if (m.getId() == object.getId()) {
+                        m.setName(object.getName());
+                        index = mainMenuItemList.indexOf(m);
+                        mainAdapter.notifyItemChanged(index);
+                        break;
+                    }
+
+                }
+
+
+                System.out.println("обновили адаптер");
+            }
+        }
+
+    }
+
+    @Override
+    public void deleteItem(MainMenuItem object) {
+
+        MainItemOperationAsync deleteAsync = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.DELETE);
+        deleteAsync.execute(object);
+        long resultDelete = 0;
+        try {
+            resultDelete = deleteAsync.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            resultDelete = 0;
+        }
+        System.out.println(resultDelete);
+        if (resultDelete > 0) {
+            if (mainMenuItemList != null) {
+                int index;
+                for (MainMenuItem m : mainMenuItemList) {
+                    if (m.getId() == object.getId()) {
+                        index = mainMenuItemList.indexOf(m);
+                        mainMenuItemList.remove(index);
+                        mainAdapter.notifyItemRemoved(index);
+                        return;
+                    }
+
+                }
+
+
+                System.out.println("удалили итем");
+            }
+        }
+
+    }
+
+
 }

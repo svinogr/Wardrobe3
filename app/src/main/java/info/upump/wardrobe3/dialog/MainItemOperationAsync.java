@@ -10,7 +10,7 @@ import info.upump.wardrobe3.model.MainMenuItem;
  * Created by explo on 29.10.2017.
  */
 
-public class MainItemOperationAsynck extends AsyncTask<MainMenuItem, Void, Boolean> {
+public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> {
     MainTableDao mainTableDao;
     public static final int DELETE = 0;
     public static final int UPDATE = 2;
@@ -18,14 +18,14 @@ public class MainItemOperationAsynck extends AsyncTask<MainMenuItem, Void, Boole
     private  int operation;
 
 
-    public MainItemOperationAsynck(Context context, int operation) {
+    public MainItemOperationAsync(Context context, int operation) {
         mainTableDao = new MainTableDao(context);
         this.operation = operation;
 
     }
 
     @Override
-    protected Boolean doInBackground(MainMenuItem... params) {
+    protected Long doInBackground(MainMenuItem... params) {
         MainMenuItem mainMenuItem = params[0];
         long res=0;
 
@@ -42,8 +42,6 @@ public class MainItemOperationAsynck extends AsyncTask<MainMenuItem, Void, Boole
         }
         // наверно нужно закрыть базу
     //    mainTableDao.close();
-        if(res>0) {
-            return true;
-        }else return false;
+        return  res;
     }
 }
