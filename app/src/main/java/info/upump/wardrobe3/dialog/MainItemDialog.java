@@ -81,6 +81,9 @@ public class MainItemDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
+                        ViewFragmentController viewFragmentController = getViewFragmentController();
+
+                        viewFragmentController.cancelUpdate();
                     }
                 });
 

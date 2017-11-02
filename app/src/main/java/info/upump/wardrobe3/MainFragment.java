@@ -1,7 +1,10 @@
 package info.upump.wardrobe3;
 
+import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.adapter.MainAdapter;
+import info.upump.wardrobe3.callback.SwipeCalback;
+import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
 import info.upump.wardrobe3.model.MainMenuItem;
@@ -58,27 +63,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     private ItemTouchHelper.Callback createItemTouchHelperCallback() {
-        ItemTouchHelper.Callback callback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        ItemTouchHelper.Callback callback = new SwipeCalback(this);
 
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                switch (direction) {
-                    case 8:
-                        break;
-                    case 4:
-                        temPositionMainItem = viewHolder.getAdapterPosition();
-                        tempMainItem = mainMenuItemList.get(temPositionMainItem);
-                        deleteItem(tempMainItem);
-                        break;
-                }
-
-            }
-        };
         return callback;
     }
 
@@ -191,7 +177,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void deleteItem(MainMenuItem object) {
+    public void deleteItem(int position) {
+
+        MainMenuItem object = mainMenuItemList.get(position);
+        tempMainItem = object;
+        temPositionMainItem = position;
 
         MainItemOperationAsync deleteAsync = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.DELETE);
         deleteAsync.execute(object);
@@ -213,6 +203,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                         index = mainMenuItemList.indexOf(m);
                         mainMenuItemList.remove(index);
                         mainAdapter.notifyItemRemoved(index);
+                        showSnackBar();
                         return;
                     }
 
@@ -221,7 +212,74 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 System.out.println("удалили итем");
             }
+
         }
+
+
+    }
+
+    @Override
+    public void showSnackBar() {
+        System.out.println("snack");
+        Snackbar.make(getView(),getString(R.string.action_to_delite_item_snack_bar), Snackbar.LENGTH_LONG )
+                .setAction(R.string.action_snak_bar_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      snackBarUndo();
+
+                    }
+                }).show();
+
+    }
+
+    @Override
+    public void snackBarUndo() {
+        if(tempMainItem != null){
+            MainItemOperationAsync mainItemOperationAsync = new MainItemOperationAsync(getContext(),MainItemOperationAsync.INSERT);
+            mainItemOperationAsync.execute(tempMainItem);
+            long resultInsert;
+            try {
+                resultInsert = mainItemOperationAsync.get();
+                System.out.println(resultInsert);
+                System.out.println(tempMainItem.getId());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                resultInsert = 0;
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                resultInsert = 0;
+            }
+            if(resultInsert>-1){
+                System.out.println(resultInsert);
+                mainMenuItemList.add(temPositionMainItem,tempMainItem);
+                mainAdapter.notifyItemInserted(temPositionMainItem);
+               // mainAdapter.notifyItemChanged(temPositionMainItem);
+                tempMainItem = null;
+                temPositionMainItem = 0;
+            }
+        }
+
+    }
+
+    @Override
+    public void editItem(int positionMainItem) {
+        temPositionMainItem = positionMainItem;
+        DialogFragment dialogFragment = new MainItemDialog();
+        MainMenuItem mainMenuItem = mainMenuItemList.get(positionMainItem);
+        Bundle bundle = new Bundle();
+        bundle.putInt("operation", MainItemOperationAsync.UPDATE);
+        bundle.putLong("id", mainMenuItem.getId());
+        bundle.putString("name", mainMenuItem.getName());
+        dialogFragment.setArguments(bundle);
+        dialogFragment.show(getActivity().getFragmentManager(), MainItemDialog.TAG);
+
+
+    }
+
+    @Override
+    public void cancelUpdate() {
+        mainAdapter.notifyItemChanged(temPositionMainItem);
+        temPositionMainItem  = 0;
 
     }
 

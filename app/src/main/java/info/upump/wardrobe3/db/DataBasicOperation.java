@@ -12,4 +12,5 @@ public interface DataBasicOperation<T> {
     Cursor getAll();
     Long delete(T item);
     Long update(T item);
+    Long inserWithManualId(T object);
 }

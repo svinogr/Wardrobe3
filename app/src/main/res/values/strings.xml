@@ -11,4 +11,6 @@
     <string name="positiv_btn_dialog_new_main_item">Сохранить</string>
     <string name="negative_btn_dialog_new_main_item">Отмена</string>
     <string name="title_dialog_update_main_item">Введите название ящика</string>
+    <string name="action_to_delite_item_snack_bar">удалено</string>
+    <string name="action_snak_bar_undo">Undo?</string>
 </resources>

@@ -11,6 +11,7 @@ import info.upump.wardrobe3.model.MainMenuItem;
  */
 
 public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> {
+    public static final int INSERT = 3;
     MainTableDao mainTableDao;
     public static final int DELETE = 0;
     public static final int UPDATE = 2;
@@ -39,6 +40,8 @@ public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> 
             case SAVE:
                 res =  mainTableDao.save(mainMenuItem);
                 break;
+            case INSERT:
+                mainTableDao.inserWithManualId(mainMenuItem);
         }
         // наверно нужно закрыть базу
     //    mainTableDao.close();

@@ -9,5 +9,11 @@ import info.upump.wardrobe3.model.MainMenuItem;
 public interface ViewFragmentController<T> {
     void addNewItem(T object);
     void updateItem(T object);
-    void deleteItem(T object);
+    void deleteItem(int position);
+    void showSnackBar();
+    void snackBarUndo();
+
+    void editItem(int positionMainItem);
+
+    void cancelUpdate();
 }

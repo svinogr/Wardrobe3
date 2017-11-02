@@ -56,4 +56,14 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
 
 
     }
+
+    @Override
+    public Long inserWithManualId(MainMenuItem item) {
+        ContentValues cv = new ContentValues();
+        cv.put(DataBaseHelper.TABLE_KEY_ID, item.getId());
+        cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+      return Long.valueOf(database.insert(DataBaseHelper.TABLE_MAIN_MENU,null,cv));
+
+    }
 }
