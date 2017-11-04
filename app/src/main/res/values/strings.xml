@@ -13,4 +13,7 @@
     <string name="title_dialog_update_main_item">Введите название ящика</string>
     <string name="action_to_delite_item_snack_bar">удалено</string>
     <string name="action_snak_bar_undo">Undo?</string>
+    <string name="db_path">/data/data/info.upump.wardrobe3/databases/</string>
+    <string name="detail_btn_cancel">отмена</string>
+    <string name="detail_btn_ok">сохранить</string>
 </resources>

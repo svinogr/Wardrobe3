@@ -10,6 +10,7 @@ public class SubItem extends MainMenuItem {
     private float cost;
     private Date date;
     private long idMainItem;
+    private  String description;
 
     public SubItem() {
     }
@@ -38,6 +39,15 @@ public class SubItem extends MainMenuItem {
         this.idMainItem = idMainItem;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,4 +70,5 @@ public class SubItem extends MainMenuItem {
         result = 31 * result + (int) (idMainItem ^ (idMainItem >>> 32));
         return result;
     }
+
 }

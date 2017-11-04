@@ -42,7 +42,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
 
     @Override
     public Long delete(MainMenuItem item) {
-        return Long.valueOf(database.delete(DataBaseHelper.TABLE_MAIN_MENU,DataBaseHelper.TABLE_KEY_ID+"="+item.getId(),null));
+        return (long) database.delete(DataBaseHelper.TABLE_MAIN_MENU, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
 
     }
 
@@ -52,18 +52,23 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
 
-      return Long.valueOf(database.update(DataBaseHelper.TABLE_MAIN_MENU,cv,DataBaseHelper.TABLE_KEY_ID+"="+item.getId(),null));
+      return (long) database.update(DataBaseHelper.TABLE_MAIN_MENU, cv, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
 
 
     }
 
     @Override
-    public Long inserWithManualId(MainMenuItem item) {
+    public Long insertWithManualId(MainMenuItem item) {
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_ID, item.getId());
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
-      return Long.valueOf(database.insert(DataBaseHelper.TABLE_MAIN_MENU,null,cv));
+      return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
 
+    }
+
+    @Override
+    public Cursor getByParentId(long id) {
+        return null;
     }
 }

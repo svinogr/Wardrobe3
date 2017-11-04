@@ -41,7 +41,7 @@ public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> 
                 res =  mainTableDao.save(mainMenuItem);
                 break;
             case INSERT:
-                mainTableDao.inserWithManualId(mainMenuItem);
+                mainTableDao.insertWithManualId(mainMenuItem);
         }
         // наверно нужно закрыть базу
     //    mainTableDao.close();

@@ -1,6 +1,7 @@
 package info.upump.wardrobe3;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,9 +21,13 @@ import java.util.List;
 
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
+import info.upump.wardrobe3.dialog.SubItemOperationAsync;
+import info.upump.wardrobe3.model.SubItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, FragmentController {
+    public static final int DETAIL_SUB_ACTIVITY_ITEM_RESULT = 100;
+    public static final int  DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
     private FragmentTransaction fragmentTransaction;
     private Fragment fragment;
     private String fragmentTag;
@@ -45,14 +50,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        fragment = new MainFragment();
-        fragmentTag = MainFragment.TAG;
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.replace(R.id.mainContainer, fragment, fragmentTag);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+
+        if (savedInstanceState == null) {
+
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+
+            fragment = new MainFragment();
+            fragmentTag = MainFragment.TAG;
+
+            fragmentTransaction.replace(R.id.mainContainer, fragment, fragmentTag);
+            fragmentTransaction.commit();
+        }
+
+
     }
 
     @Override
@@ -115,17 +127,26 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         Fragment currentFragment = getCurrentFragment();
+        if (currentFragment == null
+                ) return;
         fragmentTag = currentFragment.getTag();
+        System.out.println("mTag  " + fragmentTag);
+        DialogFragment dialogFragment;
+        Bundle bundle;
         switch (fragmentTag) {
             case MainFragment.TAG:
-                DialogFragment dialogFragment = new MainItemDialog();
-                Bundle bundle = new Bundle();
+                dialogFragment = new MainItemDialog();
+                bundle = new Bundle();
                 bundle.putInt("operation", MainItemOperationAsync.SAVE);
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(getFragmentManager(), MainItemDialog.TAG);
-
-                Snackbar.make(v, "это фаб", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                break;
+            case SubFragment.TAG:
+                Intent intent = new Intent(this, SubItemDetail.class);
+                long id = getIdItemCurrentFragment();
+                intent.putExtra("id", id);
+                startActivityForResult(intent, DETAIL_SUB_ACTIVITY_ITEM_RESULT);
+                break;
 
         }
 
@@ -133,13 +154,15 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public Fragment getCurrentFragment()  {
+    public Fragment getCurrentFragment() {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        Fragment fragment=null;
-        System.out.println(fragments.size());
+        Fragment fragment = null;
+        System.out.println("колво " + fragments.size());
         for (Fragment f : fragments) {
             if (f != null) {
-                if (f.isResumed()) {
+                System.out.println(f.isVisible());
+                System.out.println(f.isResumed());
+                if (f.isVisible()) {
                     System.out.println("текущ " + f.getTag());
                     fragment = f;
 
@@ -149,4 +172,42 @@ public class MainActivity extends AppCompatActivity
 
         return fragment;
     }
+
+    @Override
+    public long getIdItemCurrentFragment() {
+        SubFragment fragment = (SubFragment) getCurrentFragment();
+        if (fragment != null) {
+            System.out.println("id parent " + fragment.getIdParent());
+            return fragment.getIdParent();
+        }
+        return -1;
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (data == null) {
+            return;
+        }
+        if (resultCode == RESULT_OK) {
+            if (requestCode == DETAIL_SUB_ACTIVITY_ITEM_RESULT) {
+                SubItem subItem = new SubItem();
+                subItem.setName(data.getStringExtra("name"));
+                subItem.setCost(data.getFloatExtra("cost", 0));
+                subItem.setDescription(data.getStringExtra("description"));
+                subItem.setImg(data.getStringExtra("img"));
+                subItem.setIdMainItem(getIdItemCurrentFragment());
+                System.out.println("new");
+                ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
+                viewFragmentController.addNewItem(subItem);
+            }
+            if(requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT){
+                System.out.println("edit");
+            }
+
+        }
+    }
+
 }

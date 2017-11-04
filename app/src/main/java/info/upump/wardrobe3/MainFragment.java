@@ -3,7 +3,6 @@ package info.upump.wardrobe3;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.adapter.MainAdapter;
-import info.upump.wardrobe3.callback.SwipeCalback;
+import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
@@ -63,7 +62,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     private ItemTouchHelper.Callback createItemTouchHelperCallback() {
-        ItemTouchHelper.Callback callback = new SwipeCalback(this);
+        ItemTouchHelper.Callback callback = new SwipeCallback(this);
 
         return callback;
     }

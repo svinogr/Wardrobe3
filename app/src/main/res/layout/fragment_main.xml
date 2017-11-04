@@ -5,21 +5,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView
+        android:id="@+id/imgUp"
+        android:src="@color/colorPrimaryDark"
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="50dp"></LinearLayout>
+        android:layout_height="50dp"
+
+        />
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/recycledFragmentMain"
         android:layout_width="match_parent"
-        android:layout_weight="2"
+android:layout_weight="1"
+        android:layout_height="match_parent"/>
 
-        android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_weight="1"
+    <ImageView
+        android:id="@+id/imgBottom"
         android:layout_width="match_parent"
-        android:layout_height="70dp"></LinearLayout>
+        android:layout_height="50dp"
+        android:src="@color/colorPrimaryDark"
+
+         />
+
 </LinearLayout>
