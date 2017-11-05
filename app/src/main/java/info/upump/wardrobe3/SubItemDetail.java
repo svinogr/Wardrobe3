@@ -1,15 +1,21 @@
 package info.upump.wardrobe3;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import info.upump.wardrobe3.dialog.CameraOrChoosePhotoDialog;
+
 public class SubItemDetail extends AppCompatActivity implements View.OnClickListener, ViewDetailController {
+    public static final int CAMERA_RESULT = 2;
     private EditText name;
     private EditText cost;
     private EditText description;
@@ -28,8 +34,11 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         image = (ImageView) findViewById(R.id.detail_img);
         cancelBtn = (Button) findViewById(R.id.detail_btn_cancel);
         okBtn = (Button) findViewById(R.id.detail_btn_ok);
+
+        image.setOnClickListener(this);
         cancelBtn.setOnClickListener(this);
         okBtn.setOnClickListener(this);
+
         Intent intent = getIntent();
         if(intent.getIntExtra("edit",0)>0){
             editId = intent.getLongExtra("id",0);
@@ -38,11 +47,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
             cost.setText(intent.getStringExtra("cost"));
             //image
             description.setText(intent.getStringExtra("description"));
-
         }
-
-
-
     }
 
     @Override
@@ -57,6 +62,13 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
                 Intent resultIntent = createResultIntent();
                 setResult(RESULT_OK, resultIntent);
                 finish();
+                break;
+            case R.id.detail_img:
+             /*   System.out.println("выбор картинки");
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_RESULT);*/
+                CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = new CameraOrChoosePhotoDialog();
+                cameraOrChoosePhotoDialog.show(getFragmentManager(),"camera");
                 break;
         }
 
@@ -79,5 +91,19 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         intent.putExtra("description", description.getText().toString());
         intent.putExtra("image","/ссылка");
             return intent;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getFragmentManager().findFragmentByTag("camera");
+        cameraOrChoosePhotoDialog.dismiss();
+        if(data == null){return;}
+        if(resultCode == RESULT_OK){
+            if(requestCode == CAMERA_RESULT){
+                Bitmap thumbnailBitmap = (Bitmap) data.getExtras().get("data");
+                image.setImageBitmap(thumbnailBitmap);
+
+            }
+        }
     }
 }

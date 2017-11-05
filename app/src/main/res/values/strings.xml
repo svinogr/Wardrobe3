@@ -16,4 +16,7 @@
     <string name="db_path">/data/data/info.upump.wardrobe3/databases/</string>
     <string name="detail_btn_cancel">отмена</string>
     <string name="detail_btn_ok">сохранить</string>
+    <string name="dialog_camera">Сделать фото</string>
+    <string name="dialog_choose_photo">Выбрать фото</string>
+    <string name="dialog_camera_or_chosse_title">Добавить изображение</string>
 </resources>

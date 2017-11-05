@@ -42,7 +42,7 @@ public class MainItemDialog extends DialogFragment {
         builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
-        View inflate = layoutInflater.inflate(R.layout.dailog_main_add_item, null);
+        View inflate = layoutInflater.inflate(R.layout.dailog_fragment_main_add_item, null);
         textNameItem = inflate.findViewById(R.id.editTextForMainItemDialog);
         builder.setView(inflate);
 
