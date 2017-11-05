@@ -187,7 +187,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (data == null) {
             return;
         }
@@ -205,6 +204,15 @@ public class MainActivity extends AppCompatActivity
             }
             if(requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT){
                 System.out.println("edit");
+                SubItem subItem = new SubItem();
+                subItem.setId(data.getLongExtra("id",0));
+                subItem.setName(data.getStringExtra("name"));
+                subItem.setCost(data.getFloatExtra("cost", 0));
+                subItem.setDescription(data.getStringExtra("description"));
+                subItem.setImg(data.getStringExtra("img"));
+                subItem.setIdMainItem(getIdItemCurrentFragment());
+                ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
+                viewFragmentController.updateItem(subItem);
             }
 
         }

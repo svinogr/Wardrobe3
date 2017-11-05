@@ -31,7 +31,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     TABLE_KEY_IMG + " text)";
 
     public static final String TABLE_KEY_COST = "cost";
-    public static final String TABLE_KEY_DATE = "date";
     public static final String TABLE_KEY_ID_MAIN = "id_main";
     public static final String TABLE_KEY_DESCRIPTION = "description";
     public static final String CREATE_SUB_ITEM_TABLE =
@@ -41,7 +40,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                     TABLE_KEY_NAME + " text, " +
                     TABLE_KEY_IMG + " text, " +
                     TABLE_KEY_COST + " float, " +
-                    TABLE_KEY_DATE + " date, " +
                     TABLE_KEY_ID_MAIN + " integer, " +
                     TABLE_KEY_DESCRIPTION + " text)";
 

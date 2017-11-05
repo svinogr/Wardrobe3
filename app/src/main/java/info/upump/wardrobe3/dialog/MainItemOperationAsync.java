@@ -10,12 +10,12 @@ import info.upump.wardrobe3.model.MainMenuItem;
  * Created by explo on 29.10.2017.
  */
 
-public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> {
-    public static final int INSERT = 3;
+public class MainItemOperationAsync extends AsyncTask<MainMenuItem, Void, Long> implements OperationAsync{
+  /*  public static final int INSERT = 3;*/
     MainTableDao mainTableDao;
-    public static final int DELETE = 0;
+ /*   public static final int DELETE = 0;
     public static final int UPDATE = 2;
-    public static final int SAVE = 1;
+    public static final int SAVE = 1;*/
     private  int operation;
 
 

@@ -21,7 +21,6 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
-        cv.put(DataBaseHelper.TABLE_KEY_DATE, String.valueOf(item.getDate()));
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());
 
@@ -48,14 +47,14 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
 
     @Override
     public Long update(SubItem item) {
+        System.out.println(" update db sub"+ item.getId());
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
-        cv.put(DataBaseHelper.TABLE_KEY_DATE, String.valueOf(item.getDate()));
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());
-        return (long) database.update(DataBaseHelper.TABLE_MAIN_MENU, cv, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
+        return (long) database.update(DataBaseHelper.TABLE_SUB_ITEM, cv, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
     }
 
     @Override
@@ -64,11 +63,10 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
-        cv.put(DataBaseHelper.TABLE_KEY_DATE, String.valueOf(item.getDate()));
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());
         cv.put(DataBaseHelper.TABLE_KEY_ID,item.getId());
-        return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
+        return database.insert(DataBaseHelper.TABLE_SUB_ITEM, null, cv);
     }
 
     @Override
@@ -80,7 +78,6 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
                         DataBaseHelper.TABLE_KEY_NAME,
                         DataBaseHelper.TABLE_KEY_IMG,
                         DataBaseHelper.TABLE_KEY_COST,
-                        DataBaseHelper.TABLE_KEY_DATE,
                         DataBaseHelper.TABLE_KEY_ID_MAIN,
                         DataBaseHelper.TABLE_KEY_DESCRIPTION},
                 DataBaseHelper.TABLE_KEY_ID_MAIN + "=? ", new String[]{String.valueOf(id)}, null, null, null, null);

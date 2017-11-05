@@ -10,9 +10,9 @@ import info.upump.wardrobe3.model.SubItem;
  * Created by explo on 02.11.2017.
  */
 
-public class SubItemOperationAsync extends AsyncTask<SubItem,Void,Long> {
+public class SubItemOperationAsync extends AsyncTask<SubItem,Void,Long>  implements OperationAsync{
+    private SubItemTableDao subItemTableDao;
     public static final int INSERT = 3;
-   private SubItemTableDao subItemTableDao;
     public static final int DELETE = 0;
     public static final int UPDATE = 2;
     public static final int SAVE = 1;
@@ -26,21 +26,21 @@ public class SubItemOperationAsync extends AsyncTask<SubItem,Void,Long> {
 
     @Override
     protected Long doInBackground(SubItem... params) {
-        SubItem mainMenuItem = params[0];
+        SubItem subItem = params[0];
         long res=0;
 
         switch (operation){
             case DELETE:
-                res = subItemTableDao.delete(mainMenuItem);
+                res = subItemTableDao.delete(subItem);
                 break;
             case UPDATE:
-                res = subItemTableDao.update(mainMenuItem);
+                res = subItemTableDao.update(subItem);
                 break;
             case SAVE:
-                res =  subItemTableDao.save(mainMenuItem);
+                res =  subItemTableDao.save(subItem);
                 break;
             case INSERT:
-                subItemTableDao.insertWithManualId(mainMenuItem);
+                subItemTableDao.insertWithManualId(subItem);
         }
         // наверно нужно закрыть базу
         //    mainTableDao.close();

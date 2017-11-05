@@ -16,6 +16,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     private ImageView image;
     private Button cancelBtn, okBtn;
     public static final int EDIT =1;
+    private long editId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         okBtn.setOnClickListener(this);
         Intent intent = getIntent();
         if(intent.getIntExtra("edit",0)>0){
+            editId = intent.getLongExtra("id",0);
             name.setText(intent.getStringExtra("name"));
             System.out.println(intent.getStringExtra("cost"));
             cost.setText(intent.getStringExtra("cost"));
@@ -63,6 +65,9 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     @Override
     public Intent createResultIntent() {
         Intent intent = new Intent();
+        if(editId > 0){
+            intent.putExtra("id",editId);
+        }
         if (name.getText().toString().equals("")) {
             return null;
         }

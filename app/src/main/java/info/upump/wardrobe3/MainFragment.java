@@ -22,6 +22,7 @@ import info.upump.wardrobe3.adapter.MainAdapter;
 import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
+import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
 import info.upump.wardrobe3.model.MainMenuItem;
 
@@ -115,7 +116,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void addNewItem(MainMenuItem object) {
-        MainItemOperationAsync addItemAsync = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.SAVE);
+        MainItemOperationAsync addItemAsync = new MainItemOperationAsync(getActivity(), OperationAsync.SAVE);
         addItemAsync.execute(object);
         long resultAdding = 0;
         try {
@@ -144,7 +145,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void updateItem(MainMenuItem object) {
 
-        MainItemOperationAsync addItemAsynck = new MainItemOperationAsync(getActivity(), MainItemOperationAsync.UPDATE);
+        MainItemOperationAsync addItemAsynck = new MainItemOperationAsync(getActivity(), OperationAsync.UPDATE);
         addItemAsynck.execute(object);
         long resultupdate = 0;
         try {
@@ -234,7 +235,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void snackBarUndo() {
         if(tempMainItem != null){
-            MainItemOperationAsync mainItemOperationAsync = new MainItemOperationAsync(getContext(),MainItemOperationAsync.INSERT);
+            MainItemOperationAsync mainItemOperationAsync = new MainItemOperationAsync(getContext(),OperationAsync.INSERT);
             mainItemOperationAsync.execute(tempMainItem);
             long resultInsert;
             try {
@@ -266,7 +267,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         DialogFragment dialogFragment = new MainItemDialog();
         MainMenuItem mainMenuItem = mainMenuItemList.get(positionMainItem);
         Bundle bundle = new Bundle();
-        bundle.putInt("operation", MainItemOperationAsync.UPDATE);
+        bundle.putInt("operation", OperationAsync.UPDATE);
         bundle.putLong("id", mainMenuItem.getId());
         bundle.putString("name", mainMenuItem.getName());
         dialogFragment.setArguments(bundle);

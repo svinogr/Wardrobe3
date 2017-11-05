@@ -38,8 +38,8 @@ public class LoaderSubItem extends AsyncTaskLoader<List<SubItem>> {
                 subItem.setImg(cursor.getString(2));
                 subItem.setCost(cursor.getFloat(3));
                  // TODO дату вписать
-                subItem.setIdMainItem(cursor.getLong(5));
-                subItem.setDescription(cursor.getString(6));
+                subItem.setIdMainItem(cursor.getLong(4));
+                subItem.setDescription(cursor.getString(5));
                 list.add(subItem);
             }while (cursor.moveToNext());
         }
