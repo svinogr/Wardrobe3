@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.upump.wardrobe3">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +21,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".SubItemDetail"></activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="info.upump.wardrobe3.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+        <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/path" />
+            </provider>
     </application>
 
 </manifest>

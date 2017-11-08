@@ -17,6 +17,7 @@
             android:orientation="vertical">
 
             <ImageView
+
                 android:id="@+id/detail_img"
                 android:src="@color/colorPrimary"
                 android:layout_width="match_parent"

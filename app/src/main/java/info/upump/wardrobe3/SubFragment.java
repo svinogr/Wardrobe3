@@ -216,7 +216,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         Intent intent = new Intent(getContext(), SubItemDetail.class);
         intent.putExtra("id", subItem.getId());
         intent.putExtra("name", subItem.getName());
-        intent.putExtra("img", subItem.getImg());
+        intent.putExtra("image", subItem.getImg());
         System.out.println(subItem.getCost());
         intent.putExtra("cost", String.valueOf(subItem.getCost()));
         intent.putExtra("description", subItem.getDescription());

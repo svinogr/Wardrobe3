@@ -2,6 +2,8 @@ package info.upump.wardrobe3;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,7 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import info.upump.wardrobe3.dialog.CameraOrChoosePhotoDialog;
+
+import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class SubItemDetail extends AppCompatActivity implements View.OnClickListener, ViewDetailController {
     public static final int CAMERA_RESULT = 2;
@@ -21,8 +27,9 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     private EditText description;
     private ImageView image;
     private Button cancelBtn, okBtn;
-    public static final int EDIT =1;
+    public static final int EDIT = 1;
     private long editId;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +47,21 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         okBtn.setOnClickListener(this);
 
         Intent intent = getIntent();
-        if(intent.getIntExtra("edit",0)>0){
-            editId = intent.getLongExtra("id",0);
+        if (intent.getIntExtra("edit", 0) > 0) {
+            editId = intent.getLongExtra("id", 0);
             name.setText(intent.getStringExtra("name"));
             System.out.println(intent.getStringExtra("cost"));
             cost.setText(intent.getStringExtra("cost"));
-            //image
+            image.setImageURI(getUriFromDB(intent.getStringExtra("image")));
             description.setText(intent.getStringExtra("description"));
         }
+    }
+
+    private Uri getUriFromDB(String image) {
+            File directory = new File(getFilesDir(), "images");
+            File file = new File(directory.getPath(), "/"+image);
+            Uri uri = getUriForFile(this, "info.upump.wardrobe3.fileprovider", file);
+        return uri;
     }
 
     @Override
@@ -64,11 +78,8 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.detail_img:
-             /*   System.out.println("выбор картинки");
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_RESULT);*/
                 CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = new CameraOrChoosePhotoDialog();
-                cameraOrChoosePhotoDialog.show(getFragmentManager(),"camera");
+                cameraOrChoosePhotoDialog.show(getFragmentManager(), "camera");
                 break;
         }
 
@@ -77,33 +88,49 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     @Override
     public Intent createResultIntent() {
         Intent intent = new Intent();
-        if(editId > 0){
-            intent.putExtra("id",editId);
+        if (editId > 0) {
+            intent.putExtra("id", editId);
         }
         if (name.getText().toString().equals("")) {
             return null;
         }
         intent.putExtra("name", name.getText().toString());
-        if(cost.getText().toString().equals("")){
+        if (cost.getText().toString().equals("")) {
             intent.putExtra("cost", 0);
         } else {
-        intent.putExtra("cost", Float.parseFloat(cost.getText().toString()));}
+            intent.putExtra("cost", Float.parseFloat(cost.getText().toString()));
+        }
         intent.putExtra("description", description.getText().toString());
-        intent.putExtra("image","/ссылка");
-            return intent;
+        if(file!=null) {
+            intent.putExtra("image", file.getName());
+        }
+        return intent;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getFragmentManager().findFragmentByTag("camera");
+        file = cameraOrChoosePhotoDialog.getFile();
         cameraOrChoosePhotoDialog.dismiss();
-        if(data == null){return;}
-        if(resultCode == RESULT_OK){
-            if(requestCode == CAMERA_RESULT){
-                Bitmap thumbnailBitmap = (Bitmap) data.getExtras().get("data");
-                image.setImageBitmap(thumbnailBitmap);
+       /* if(data == null){
+            System.out.println("intent null"); return;}*/
+        if (resultCode == RESULT_OK) {
+            if (requestCode == CAMERA_RESULT) {
+                // TODO проверка на размер экрана
+                Uri contentUri = Uri.fromFile(file);
+                addPicTogalery(contentUri);
 
+                image.setImageURI(contentUri);
+                System.out.println("ur "+contentUri.toString());
+
+                cameraOrChoosePhotoDialog.dismiss();
             }
         }
     }
+    private void addPicTogalery(Uri contentUri){
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+    }
+
 }

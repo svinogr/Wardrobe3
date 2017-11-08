@@ -196,7 +196,8 @@ public class MainActivity extends AppCompatActivity
                 subItem.setName(data.getStringExtra("name"));
                 subItem.setCost(data.getFloatExtra("cost", 0));
                 subItem.setDescription(data.getStringExtra("description"));
-                subItem.setImg(data.getStringExtra("img"));
+                System.out.println(data.getStringExtra("img"));
+                subItem.setImg(data.getStringExtra("image"));
                 subItem.setIdMainItem(getIdItemCurrentFragment());
                 System.out.println("new");
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
@@ -209,7 +210,8 @@ public class MainActivity extends AppCompatActivity
                 subItem.setName(data.getStringExtra("name"));
                 subItem.setCost(data.getFloatExtra("cost", 0));
                 subItem.setDescription(data.getStringExtra("description"));
-                subItem.setImg(data.getStringExtra("img"));
+                subItem.setImg(data.getStringExtra("image"));
+                System.out.println(data.getStringExtra("image"));
                 subItem.setIdMainItem(getIdItemCurrentFragment());
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
                 viewFragmentController.updateItem(subItem);
