@@ -6,6 +6,8 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,21 +16,21 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubItemDetail;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
-/**
- * Created by explo on 05.11.2017.
- */
 
 public class CameraOrChoosePhotoDialog extends DialogFragment implements View.OnClickListener {
     private AlertDialog.Builder builder;
     private TextView camera, choosePhoto;
     private File file;
-    private String nameFile;
+    private Uri uri;
+    private File directory;
 
     @Override
     public void onAttach(Context context) {
@@ -67,38 +69,73 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dialog_camera:
-                System.out.println("выбор картинки");
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 Uri uri = generateUriPhoto();
+                if (uri != null) {
 
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                    cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                    List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                    for (ResolveInfo resolveInfo : resInfoList) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        System.out.println("pacake name" +packageName);
+                        getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
+
+                    getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+                } else dismiss();
                 break;
             case R.id.dialog_choose_photo:
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                getActivity().startActivityForResult(photoPickerIntent, SubItemDetail.CHOOSE_PHOTO_RESULT);
                 break;
         }
     }
 
     private Uri generateUriPhoto() {
-        File directory = new File(getActivity().getFilesDir(), "images");
+        file = createNameFile();
+        uri = null;
+        if (file != null) {
+            System.out.println("abs file " + file.getAbsolutePath());
 
-        if (!directory.exists()) {
-            directory.mkdirs();
+
+            String aut = getActivity().getPackageName() + ".fileprovider";
+            uri = getUriForFile(getActivity(), aut, file);
+            System.out.println("v dialogr uri " + uri);
+
+
         }
-
-        System.out.println(directory);
-        String name = "/photo_" + System.currentTimeMillis() + ".jpg";
-        System.out.println(name);
-
-        file = new File(directory.getPath(), name);
-        Uri uri = getUriForFile(getActivity(), "info.upump.wardrobe3.fileprovider", file);
-        getActivity().grantUriPermission("info.upump.wardrobe3", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         return uri;
 
     }
 
     public File getFile() {
+        return file;
+    }
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    private File createNameFile() {
+        directory = new File(getActivity().getFilesDir(), "images");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        String name = "photo_" + System.currentTimeMillis();
+        File file = null;
+        try {
+            file = File.createTempFile(
+                    name,  /* prefix */
+                    "jpg",         /* suffix */
+                    directory      /* directory */
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            dismiss();
+        }
         return file;
     }
 }

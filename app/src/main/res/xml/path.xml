@@ -1,5 +1,7 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <files-path name="files" path="images/"/>
+    <files-path name="my_images"  path="images"/>
+    <!--<files-path name="my_images" path="images/"  path="Android/data/info.upump.wardrobe3/files/images"/>
+    -->
     <!--<external-path name="Pictures" path="images/"-->
 
 

@@ -90,7 +90,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
                 int endOdList = subItemList.size() - 1;
                 subItemAdapter.notifyItemInserted(endOdList);
                 recyclerView.smoothScrollToPosition(endOdList);
-                System.out.println("обновили адаптер");
+                System.out.println("обновили адаптер  в суб");
 
             }
 
@@ -261,4 +261,35 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         this.idParent = idParent;
     }
 
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        System.out.println("onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        System.out.println("onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        System.out.println("onStop");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        System.out.println("onDetach");
+    }
 }

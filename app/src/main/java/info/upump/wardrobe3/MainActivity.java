@@ -27,7 +27,7 @@ import info.upump.wardrobe3.model.SubItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, FragmentController {
     public static final int DETAIL_SUB_ACTIVITY_ITEM_RESULT = 100;
-    public static final int  DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
+    public static final int DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
     private FragmentTransaction fragmentTransaction;
     private Fragment fragment;
     private String fragmentTag;
@@ -160,8 +160,15 @@ public class MainActivity extends AppCompatActivity
         System.out.println("колво " + fragments.size());
         for (Fragment f : fragments) {
             if (f != null) {
-                System.out.println(f.isVisible());
-                System.out.println(f.isResumed());
+
+                System.out.println("1 "+f.isVisible());
+                System.out.println(" 2"+f.isResumed());
+                System.out.println("3 "+f.isHidden());
+                System.out.println(" 4"+f.isDetached());
+                System.out.println("5 "+f.isAdded());
+                System.out.println(" 6"+f.isStateSaved());
+                System.out.println(" 7"+f.isRemoving());
+                System.out.println(" 8"+f.getTag());
                 if (f.isVisible()) {
                     System.out.println("текущ " + f.getTag());
                     fragment = f;
@@ -181,7 +188,6 @@ public class MainActivity extends AppCompatActivity
             return fragment.getIdParent();
         }
         return -1;
-
     }
 
 
@@ -196,22 +202,34 @@ public class MainActivity extends AppCompatActivity
                 subItem.setName(data.getStringExtra("name"));
                 subItem.setCost(data.getFloatExtra("cost", 0));
                 subItem.setDescription(data.getStringExtra("description"));
-                System.out.println(data.getStringExtra("img"));
-                subItem.setImg(data.getStringExtra("image"));
-                subItem.setIdMainItem(getIdItemCurrentFragment());
+         //       System.out.println(data.getStringExtra("img"));
+                try {
+                    subItem.setImg(data.getStringExtra("image"));
+                } catch (NullPointerException e){
+
+                }
+               // subItem.setIdMainItem(getIdItemCurrentFragment());
+                subItem.setIdMainItem(data.getLongExtra("idParent", 0));
+                System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
                 System.out.println("new");
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                viewFragmentController.addNewItem(subItem);
+                    viewFragmentController.addNewItem(subItem);
+
             }
-            if(requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT){
+            if (requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT) {
                 System.out.println("edit");
                 SubItem subItem = new SubItem();
-                subItem.setId(data.getLongExtra("id",0));
+                subItem.setId(data.getLongExtra("id", 0));
                 subItem.setName(data.getStringExtra("name"));
                 subItem.setCost(data.getFloatExtra("cost", 0));
                 subItem.setDescription(data.getStringExtra("description"));
-                subItem.setImg(data.getStringExtra("image"));
-                System.out.println(data.getStringExtra("image"));
+
+                try {
+                    subItem.setImg(data.getStringExtra("image"));
+                } catch (NullPointerException e){
+
+                }
+
                 subItem.setIdMainItem(getIdItemCurrentFragment());
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
                 viewFragmentController.updateItem(subItem);
