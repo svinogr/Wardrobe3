@@ -56,6 +56,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         recyclerView = root.findViewById(R.id.recycledFragmentMain);
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
         recyclerView.setAdapter(mainAdapter);
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createItemTouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(recyclerView);
 

@@ -19,7 +19,7 @@ public class MaskedDrawablePorterDuffDstIn extends MaskedDrawable {
     private Bitmap bitmapMask;
     private Bitmap bitmapPhoto;
 
-    private final static int WIGHT = 300;
+    private final static int WIDTH = 300;
     private final static int HEIGHT = 300;
 
     private Paint bitmapMaskPaint = new Paint();
@@ -57,7 +57,7 @@ public class MaskedDrawablePorterDuffDstIn extends MaskedDrawable {
 
     @Override
     public Bitmap setBitmapSize(Bitmap bitmap) {
-        return Bitmap.createScaledBitmap(bitmap, WIGHT, HEIGHT, false);
+        return Bitmap.createScaledBitmap(bitmap, WIDTH, HEIGHT, false);
     }
 
 
@@ -65,14 +65,14 @@ public class MaskedDrawablePorterDuffDstIn extends MaskedDrawable {
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
 
-        mBufferBitmap = Bitmap.createBitmap(WIGHT, HEIGHT, Bitmap.Config.ARGB_8888);
+        mBufferBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
         canvasBuffer = new Canvas(mBufferBitmap);
     }
 
     @Override
     public void draw(Canvas canvas) {
         if (bitmapPhoto == null) {
-            bitmapPhoto = Bitmap.createBitmap(WIGHT, HEIGHT,
+            bitmapPhoto = Bitmap.createBitmap(WIDTH, HEIGHT,
                     Bitmap.Config.ARGB_8888);
             bitmapPhoto.eraseColor(Color.GREEN);
         }

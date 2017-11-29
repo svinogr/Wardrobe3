@@ -131,7 +131,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getFragmentManager().findFragmentByTag("camera");
-
+        System.out.println(resultCode);
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_RESULT) {
                 fileFromDialog = cameraOrChoosePhotoDialog.getFile();
@@ -157,7 +157,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(mediaScanIntent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo : resInfoList) {
             String packageName = resolveInfo.activityInfo.packageName;
-            System.out.println("pacake name" +packageName);
+            System.out.println("package name" +packageName);
             this.grantUriPermission(packageName, uriFromDialog, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 

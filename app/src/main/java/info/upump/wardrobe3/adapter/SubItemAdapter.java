@@ -3,6 +3,7 @@ package info.upump.wardrobe3.adapter;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
@@ -12,12 +13,14 @@ import android.view.ViewGroup;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.mask.MaskedDrawable;
 import info.upump.wardrobe3.mask.MaskedDrawablePorterDuffDstIn;
 import info.upump.wardrobe3.model.SubItem;
 import info.upump.wardrobe3.model.SubItemViewHolder;
+import info.upump.wardrobe3.task.GetPhotoWithMaskAsynk;
 
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> {
     private List<SubItem> subItemList;
@@ -39,36 +42,20 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> {
 
     @Override
     public void onBindViewHolder(final SubItemViewHolder holder, int position) {
-      //    holder.imageView.setImageDrawable(null);
-       // holder.linearLayout.removeAllViews();
-        holder.setIsRecyclable(false);
+        holder.imageView.setImageDrawable(null);
 
-        System.out.println(holder.itemView.getId());
+        // holder.linearLayout.removeAllViews();
+        //   holder.setIsRecyclable(false);
 
 
-        System.out.println("in=mg"+subItemList.get(position).getImg());
+            System.out.println(subItemList.get(position).getImg());
+            System.out.println(1);
+            GetPhotoWithMaskAsynk getPhotoWithMaskAsynk = new GetPhotoWithMaskAsynk(holder, subItemList, bitmapMask, activity);
+            getPhotoWithMaskAsynk.execute(position);
+
 
         holder.textView.setText(subItemList.get(position).getName());
 
-        MaskedDrawable drawable = new MaskedDrawablePorterDuffDstIn();
-
-
-        if (subItemList.get(position).getImg() != null) {
-            Uri uri = Uri.parse(subItemList.get(position).getImg());
-            System.out.println(subItemList.get(position).getImg());
-            try {
-                Bitmap  bitmapPhoto = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uri);
-                drawable.setPictureBitmap(bitmapPhoto);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            drawable.setPictureBitmap(null);
-        }
-        drawable.setMaskBitmap(bitmapMask);
-        holder.imageView.setImageDrawable(drawable);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,5 +70,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> {
     public int getItemCount() {
         return subItemList.size();
     }
+
 
 }

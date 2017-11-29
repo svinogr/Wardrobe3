@@ -102,6 +102,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
 
 
             String aut = getActivity().getPackageName() + ".fileprovider";
+         //   String aut = getActivity().getPackageName() ;
             uri = getUriForFile(getActivity(), aut, file);
             System.out.println("v dialogr uri " + uri);
 
@@ -124,12 +125,13 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String name = "photo_" + System.currentTimeMillis();
+        String name = "photo_" /*+  String.valueOf(System.currentTimeMillis()).replaceAll("-","_")*/;
+        System.out.println("имя "+name);
         File file = null;
         try {
             file = File.createTempFile(
                     name,  /* prefix */
-                    "jpg",         /* suffix */
+                    ".jpg",         /* suffix */
                     directory      /* directory */
             );
         } catch (IOException e) {
