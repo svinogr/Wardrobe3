@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.upump.wardrobe3.db.MainTableDao;
+import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.MainMenuItem;
 
 /**
@@ -33,6 +34,8 @@ public class LoaderMainMenu extends AsyncTaskLoader<List<MainMenuItem>> {
                 mainMenuItem.setId(cursor.getInt(0));
                 mainMenuItem.setName(cursor.getString(1));
                 mainMenuItem.setImg(cursor.getString(2));
+                mainMenuItem.setEnumMask(EnumMask.values()[cursor.getInt(3)]);
+
                 list.add(mainMenuItem);
             }while (cursor.moveToNext());
         }

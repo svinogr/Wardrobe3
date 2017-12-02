@@ -22,13 +22,15 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_KEY_ID = "_id";
     public static final String TABLE_KEY_NAME = "name";
     public static final String TABLE_KEY_IMG = "img";
+    public static final String TABLE_KEY_MASK = "mask";
 
     private static final String CREATE_MAIN_TABLE =
             "CREATE TABLE " + TABLE_MAIN_MENU +
                     "(" +
                     TABLE_KEY_ID + " integer NOT NULL primary key autoincrement, " +
                     TABLE_KEY_NAME + " text, " +
-                    TABLE_KEY_IMG + " text)";
+                    TABLE_KEY_IMG + " text, "+
+                    TABLE_KEY_MASK + " integer)";
 
     public static final String TABLE_KEY_COST = "cost";
     public static final String TABLE_KEY_ID_MAIN = "id_main";

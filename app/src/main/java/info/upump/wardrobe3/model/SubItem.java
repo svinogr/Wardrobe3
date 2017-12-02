@@ -48,7 +48,8 @@ public class SubItem extends MainMenuItem {
     }
 
 
-    @Override
+
+   /* @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -69,6 +70,6 @@ public class SubItem extends MainMenuItem {
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (int) (idMainItem ^ (idMainItem >>> 32));
         return result;
-    }
+    }*/
 
 }

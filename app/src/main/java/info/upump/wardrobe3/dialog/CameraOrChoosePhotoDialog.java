@@ -125,7 +125,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String name = "photo_" /*+  String.valueOf(System.currentTimeMillis()).replaceAll("-","_")*/;
+        String name = "photo_" +  System.currentTimeMillis();
         System.out.println("имя "+name);
         File file = null;
         try {

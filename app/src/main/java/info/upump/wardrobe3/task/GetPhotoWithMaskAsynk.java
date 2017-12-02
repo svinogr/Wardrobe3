@@ -45,7 +45,7 @@ public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
             System.out.println(params[0]);
 
 
-            System.out.println("uri " +uri);
+            System.out.println("uri v task " +uri);
 
             try {
 
@@ -60,7 +60,6 @@ public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
 
         }else {  drawable.setPictureBitmap(null);}
 
-        System.out.println(drawable.getIntrinsicHeight());
 
 
         return drawable;
@@ -70,7 +69,7 @@ public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
     @Override
     protected void onPostExecute(Drawable drawable) {
     //    super.onPostExecute(drawable);
-        drawable.toString();
+      //  drawable.toString();
         holder.imageView.setImageDrawable(drawable);
     }
 }

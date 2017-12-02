@@ -148,21 +148,22 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         MainItemOperationAsync addItemAsynck = new MainItemOperationAsync(getActivity(), OperationAsync.UPDATE);
         addItemAsynck.execute(object);
-        long resultupdate = 0;
+        long resultUpdate = 0;
         try {
-            resultupdate = addItemAsynck.get();
+            resultUpdate = addItemAsynck.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
-            resultupdate = 0;
+            resultUpdate = 0;
         }
-        if (resultupdate > 0) {
+        if (resultUpdate > 0) {
             if (mainMenuItemList != null) {
                 int index;
                 for (MainMenuItem m : mainMenuItemList) {
                     if (m.getId() == object.getId()) {
                         m.setName(object.getName());
+                        m.setEnumMask(object.getEnumMask());
                         index = mainMenuItemList.indexOf(m);
                         mainAdapter.notifyItemChanged(index);
                         break;

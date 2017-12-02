@@ -41,6 +41,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     @Override
     public void onBindViewHolder(MainMenuViewHolder holder, final int position) {
         final long id = mainMenuItemList.get(position).getId();
+        final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
 
         holder.name.setText(mainMenuItemList.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +50,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
                 Bundle bundle = new Bundle();
                 System.out.println("v adaotere if "+id);
                 bundle.putLong("idParent",id);
+                bundle.putInt("resourceMask",resourceMask);
 
                 SubFragment fragment = new SubFragment();
                 fragment.setArguments(bundle);

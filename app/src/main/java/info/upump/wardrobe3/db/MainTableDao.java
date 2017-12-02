@@ -22,6 +22,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
         System.out.println("сохраняю главное меню");
         return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
 
@@ -33,7 +34,8 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
                 new String[]{
                         DataBaseHelper.TABLE_KEY_ID,
                         DataBaseHelper.TABLE_KEY_NAME,
-                        DataBaseHelper.TABLE_KEY_IMG},
+                        DataBaseHelper.TABLE_KEY_IMG,
+                        DataBaseHelper.TABLE_KEY_MASK},
                 null, null, null, null, null, null
         );
         return cursor;
@@ -51,6 +53,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
 
       return (long) database.update(DataBaseHelper.TABLE_MAIN_MENU, cv, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
 
@@ -63,6 +66,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         cv.put(DataBaseHelper.TABLE_KEY_ID, item.getId());
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
         cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
       return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
 
     }

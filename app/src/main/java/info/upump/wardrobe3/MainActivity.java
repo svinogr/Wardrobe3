@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
         System.out.println("колво " + fragments.size());
         for (Fragment f : fragments) {
             if (f != null) {
-
+/*
                 System.out.println("1 "+f.isVisible());
                 System.out.println(" 2"+f.isResumed());
                 System.out.println("3 "+f.isHidden());
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
                 System.out.println("5 "+f.isAdded());
                 System.out.println(" 6"+f.isStateSaved());
                 System.out.println(" 7"+f.isRemoving());
-                System.out.println(" 8"+f.getTag());
+                System.out.println(" 8"+f.getTag());*/
                 if (f.isVisible()) {
                     System.out.println("текущ " + f.getTag());
                     fragment = f;
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {
@@ -210,8 +211,8 @@ public class MainActivity extends AppCompatActivity
                 }
                // subItem.setIdMainItem(getIdItemCurrentFragment());
                 subItem.setIdMainItem(data.getLongExtra("idParent", 0));
-                System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
-                System.out.println("new");
+            //    System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
+          //      System.out.println("new");
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
                     viewFragmentController.addNewItem(subItem);
 

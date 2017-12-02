@@ -23,6 +23,6 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         textView = itemView.findViewById(R.id.sub_item_text_view);
         imageView = itemView.findViewById(R.id.sub_image_item);
-        linearLayout = itemView.findViewById(R.id.sub_item_layout);
+
     }
 }

@@ -3,6 +3,7 @@ package info.upump.wardrobe3.dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.db.SubItemTableDao;
 import info.upump.wardrobe3.model.SubItem;
 
@@ -18,7 +19,8 @@ public class SubItemOperationAsync extends AsyncTask<SubItem,Void,Long>  impleme
     public static final int SAVE = 1;
     private  int operation;
 
-    public SubItemOperationAsync(Context context, int operation) {
+
+    public SubItemOperationAsync(Context context,  int operation) {
         subItemTableDao = new SubItemTableDao(context);
         this.operation = operation;
 

@@ -21,6 +21,7 @@ public class LoaderSubItem extends AsyncTaskLoader<List<SubItem>> {
 
     public LoaderSubItem(Context context, long id) {
         super(context);
+        System.out.println("создаем загрузкик для "+ id);
         subItemDao = new SubItemTableDao(context);
         this.id = id;
     }

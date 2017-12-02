@@ -10,6 +10,7 @@ public class MainMenuItem {
     protected long id;
     protected String name;
     protected String img;
+    protected EnumMask enumMask;
     private List<SubItem> subItems;
 
     public MainMenuItem() {
@@ -47,7 +48,31 @@ public class MainMenuItem {
         this.subItems = subItems;
     }
 
+    public EnumMask getEnumMask() {
+        return enumMask;
+    }
+
+    public void setEnumMask(EnumMask enumMask) {
+        this.enumMask = enumMask;
+    }
+
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MainMenuItem that = (MainMenuItem) o;
+
+        return id == that.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
+    /* @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -66,5 +91,5 @@ public class MainMenuItem {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (img != null ? img.hashCode() : 0);
         return result;
-    }
+    }*/
 }

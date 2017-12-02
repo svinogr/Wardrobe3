@@ -9,11 +9,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.ViewFragmentController;
+import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.MainMenuItem;
 
 /**
@@ -24,6 +28,7 @@ public class MainItemDialog extends DialogFragment {
     public EditText textNameItem;
     public static final String TAG = "dialogMain";
     private AlertDialog.Builder builder;
+    private Spinner spiner;
 
 
     @Override
@@ -44,6 +49,18 @@ public class MainItemDialog extends DialogFragment {
 
         View inflate = layoutInflater.inflate(R.layout.dailog_fragment_main_add_item, null);
         textNameItem = inflate.findViewById(R.id.editTextForMainItemDialog);
+        spiner = inflate.findViewById(R.id.spinnerForMainItemDialog);
+        EnumMask[] values = EnumMask.values();
+        String[] spinnerData = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            spinnerData[i] = values[i].toString();
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerData);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spiner.setAdapter(adapter);
+
+
+
         builder.setView(inflate);
 
         switch (operation) {
@@ -68,9 +85,11 @@ public class MainItemDialog extends DialogFragment {
                         if (textNameItem.getText().toString().equals("")) {
                             return;
                         }
+                        int selectedSpinnerPosition = spiner.getSelectedItemPosition();
                         MainMenuItem mainMenuItem = new MainMenuItem();
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
+                        mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
                         ViewFragmentController viewFragmentController = getViewFragmentController();
                         viewFragmentController.updateItem(mainMenuItem);
@@ -101,9 +120,14 @@ public class MainItemDialog extends DialogFragment {
                     return;
                 }
                 String nameOfNewItem = textNameItem.getText().toString();
+                int selectedSpinnerPosition = spiner.getSelectedItemPosition();
+
 
                 MainMenuItem mainMenuItem = new MainMenuItem();
                 mainMenuItem.setName(nameOfNewItem);
+                // test enum
+              //  mainMenuItem.setEnumMask(EnumMask.TSHORT);
+                mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
                 ViewFragmentController viewFragmentController = getViewFragmentController();
                 viewFragmentController.addNewItem(mainMenuItem);

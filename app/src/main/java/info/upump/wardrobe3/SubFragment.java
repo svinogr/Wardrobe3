@@ -38,6 +38,8 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     private long idParent;
     private SubItem tempSubItem;
     private int tempPositionSubItem;
+    private LoaderSubItem loaderSubItem;
+    private int resourceMask;
 
     @Nullable
     @Override
@@ -48,7 +50,10 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         System.out.println("из фрагме " + idParent);
         View root = inflater.inflate(R.layout.fragment_sub_item, container, false);
 
-        subItemAdapter = new SubItemAdapter(subItemList, getActivity());
+       /// subItemAdapter = new SubItemAdapter(subItemList, getActivity());
+        //test enum
+
+        subItemAdapter = new SubItemAdapter(subItemList, getActivity(), resourceMask );
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
@@ -234,19 +239,21 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
-        long idP = getArguments().getLong("idParent");
-        System.out.println("coplfybt kjflthf " + idP);
-        LoaderSubItem loaderSubItem = new LoaderSubItem(getContext(), idP);
+       idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
+        // test enum
+        resourceMask =  getArguments().getInt("resourceMask");
+        System.out.println("coplfybt kjflthf " + idParent);
+        loaderSubItem = new LoaderSubItem(getContext(), idParent);
         return loaderSubItem;
     }
 
     @Override
     public void onLoadFinished(Loader<List<SubItem>> loader, List<SubItem> data) {
-        System.out.println("onLoadFinished-Main");
+        System.out.println("onLoadFinished-Sub");
         subItemList.clear();
         subItemList.addAll(data);
-        subItemAdapter.notifyDataSetChanged();
-    }
+       // subItemAdapter.notifyDataSetChanged();
+        subItemAdapter.notifyDataSetChanged();    }
 
     @Override
     public void onLoaderReset(Loader<List<SubItem>> loader) {
@@ -284,12 +291,15 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     @Override
     public void onStop() {
         super.onStop();
+       // onLoaderReset(loaderSubItem);
+
         System.out.println("onStop");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        subItemList = null;
         System.out.println("onDetach");
     }
 }
