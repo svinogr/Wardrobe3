@@ -3,9 +3,6 @@ package info.upump.wardrobe3;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,14 +12,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.nio.file.Path;
 import java.util.List;
 
 import info.upump.wardrobe3.dialog.CameraOrChoosePhotoDialog;
-
-import static android.support.v4.content.FileProvider.getUriForFile;
 
 public class SubItemDetail extends AppCompatActivity implements View.OnClickListener, ViewDetailController {
     public static final int CAMERA_RESULT = 2;
@@ -63,10 +55,10 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
             //image.setImageURI(getUriFromDB(intent.getStringExtra("image")));
             try {
                 image.setImageURI(Uri.parse(intent.getStringExtra("image")));
-            }catch (NullPointerException e){
-
+            } catch (NullPointerException e) {
+              // TODO как вариант сделать пустую цветную картинку, так как картинки  по URI может не быть
             }
-                description.setText(intent.getStringExtra("description"));
+            description.setText(intent.getStringExtra("description"));
         }
     }
 /*
@@ -86,12 +78,13 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         //TODO проверить на нулл
         switch (v.getId()) {
             case R.id.detail_btn_cancel:
-                setResult(RESULT_CANCELED);
+                Intent resultIntentCancel = createResultIntentCancel();
+                setResult(RESULT_CANCELED,resultIntentCancel);
                 finish();
                 break;
             case R.id.detail_btn_ok:
-                Intent resultIntent = createResultIntent();
-                setResult(RESULT_OK, resultIntent);
+                Intent resultIntentOk = createResultIntentOk();
+                setResult(RESULT_OK, resultIntentOk);
                 finish();
                 break;
             case R.id.detail_img:
@@ -103,7 +96,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public Intent createResultIntent() {
+    public Intent createResultIntentOk() {
         Intent intent = new Intent();
         if (editId > 0) {
             intent.putExtra("id", editId);
@@ -123,15 +116,52 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
             intent.putExtra("image", Uri.fromFile(fileFromDialog));
         }*/
         if (uriFromDialog != null) {
-            intent.putExtra("image",uriFromDialog.toString());
+            intent.putExtra("image", uriFromDialog.toString());
         }
         return intent;
+    }
+
+    @Override
+    public Intent createResultIntentCancel() {
+        Intent intent = new Intent();
+        if (uriFromDialog != null) {
+            intent.putExtra("image", uriFromDialog.toString());
+        }
+        return intent;
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getFragmentManager().findFragmentByTag("camera");
         System.out.println(resultCode);
+
+        switch (requestCode){
+            case CAMERA_RESULT:
+                if(resultCode == RESULT_OK){
+                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
+                    uriFromDialog = cameraOrChoosePhotoDialog.getUri();
+                    // TODO проверка на размер экрана
+                    image.setImageURI(uriFromDialog);
+                    addPicToGallery();
+                    System.out.println("ur " + uriFromDialog.toString());
+                }
+                if(resultCode == RESULT_CANCELED){
+                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
+                    fileFromDialog.delete();
+                }
+                break;
+            case CHOOSE_PHOTO_RESULT:
+                if (resultCode == RESULT_OK) {
+                    System.out.println(data.getData());
+                    uriFromDialog = data.getData();
+                    image.setImageURI(uriFromDialog);
+
+                }
+                if(resultCode == RESULT_CANCELED)
+                break;
+        }
+       /*
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_RESULT) {
                 fileFromDialog = cameraOrChoosePhotoDialog.getFile();
@@ -147,7 +177,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
                 image.setImageURI(uriFromDialog);
 
             }
-        }
+        }*/
         cameraOrChoosePhotoDialog.dismiss();
     }
 
@@ -157,13 +187,13 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         List<ResolveInfo> resInfoList = this.getPackageManager().queryIntentActivities(mediaScanIntent, PackageManager.MATCH_DEFAULT_ONLY);
         for (ResolveInfo resolveInfo : resInfoList) {
             String packageName = resolveInfo.activityInfo.packageName;
-            System.out.println("package name" +packageName);
+            System.out.println("package name" + packageName);
             this.grantUriPermission(packageName, uriFromDialog, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
 
-           mediaScanIntent.setData(uriFromDialog);
-           sendBroadcast(mediaScanIntent);
-           System.out.println("121313123");
+        mediaScanIntent.setData(uriFromDialog);
+        sendBroadcast(mediaScanIntent);
+        System.out.println("121313123");
     }
 
 }

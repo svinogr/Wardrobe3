@@ -2,6 +2,7 @@ package info.upump.wardrobe3;
 
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 import info.upump.wardrobe3.dialog.MainItemDialog;
@@ -191,30 +194,86 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {
             return;
         }
+
+        switch (requestCode) {
+            case DETAIL_SUB_ACTIVITY_ITEM_RESULT:
+                if (resultCode == RESULT_OK) {
+                    SubItem subItem = new SubItem();
+                    subItem.setName(data.getStringExtra("name"));
+                    subItem.setCost(data.getFloatExtra("cost", 0));
+                    subItem.setDescription(data.getStringExtra("description"));
+                    try {
+                        subItem.setImg(data.getStringExtra("image"));
+                    } catch (NullPointerException e) {
+
+                    }
+                    subItem.setIdMainItem(data.getLongExtra("idParent", 0));
+                    ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
+                    viewFragmentController.addNewItem(subItem);
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    final Uri uri = Uri.parse(data.getStringExtra("image"));
+                    //TODO не понятно нужно ли делать отдельный поток
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getContentResolver().delete(uri, null, null);
+
+                        }
+                    });
+                    thread.start();
+                }
+                break;
+            case DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT:
+                if (resultCode == RESULT_OK) {
+                    System.out.println("edit");
+                    SubItem subItem = new SubItem();
+                    subItem.setId(data.getLongExtra("id", 0));
+                    subItem.setName(data.getStringExtra("name"));
+                    subItem.setCost(data.getFloatExtra("cost", 0));
+                    subItem.setDescription(data.getStringExtra("description"));
+
+                    try {
+                        subItem.setImg(data.getStringExtra("image"));
+                    } catch (NullPointerException e) {
+
+                    }
+
+                    subItem.setIdMainItem(getIdItemCurrentFragment());
+                    ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
+                    viewFragmentController.updateItem(subItem);
+                }
+                if (resultCode == RESULT_CANCELED) {
+
+
+                }
+                break;
+        }
+
+/*
         if (resultCode == RESULT_OK) {
             if (requestCode == DETAIL_SUB_ACTIVITY_ITEM_RESULT) {
                 SubItem subItem = new SubItem();
                 subItem.setName(data.getStringExtra("name"));
                 subItem.setCost(data.getFloatExtra("cost", 0));
                 subItem.setDescription(data.getStringExtra("description"));
-         //       System.out.println(data.getStringExtra("img"));
+                //       System.out.println(data.getStringExtra("img"));
                 try {
                     subItem.setImg(data.getStringExtra("image"));
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
 
                 }
-               // subItem.setIdMainItem(getIdItemCurrentFragment());
+                // subItem.setIdMainItem(getIdItemCurrentFragment());
                 subItem.setIdMainItem(data.getLongExtra("idParent", 0));
-            //    System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
-          //      System.out.println("new");
+                //    System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
+                //      System.out.println("new");
                 ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                    viewFragmentController.addNewItem(subItem);
+                viewFragmentController.addNewItem(subItem);
 
             }
             if (requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT) {
@@ -227,7 +286,7 @@ public class MainActivity extends AppCompatActivity
 
                 try {
                     subItem.setImg(data.getStringExtra("image"));
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
 
                 }
 
@@ -236,7 +295,7 @@ public class MainActivity extends AppCompatActivity
                 viewFragmentController.updateItem(subItem);
             }
 
-        }
+        }*/
     }
 
 }

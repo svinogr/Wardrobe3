@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DBDao {
     protected SQLiteDatabase database;
     private DataBaseHelper dataBaseHelper;
-    private Context context;
+    protected Context context;
 
     public DBDao(Context context) {
         this.context = context;

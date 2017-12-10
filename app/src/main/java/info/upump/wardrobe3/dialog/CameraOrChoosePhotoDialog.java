@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubItemDetail;
@@ -74,7 +76,8 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
 
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                     List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
                     for (ResolveInfo resolveInfo : resInfoList) {
@@ -83,7 +86,39 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
                         getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     }
 
-                    getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        {
+                            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                System.out.println("hjdgdgdgdgdgdgdgdgdg");
+                               // getActivity().requestPermissions(new String[]{android.Manifest.permission.CAMERA}, 1);
+                                if (getActivity().shouldShowRequestPermissionRationale(
+                                        android.Manifest.permission.CAMERA)) {
+                                    getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+
+                                    // Show an explanation to the user *asynchronously* -- don't block
+                                    // this thread waiting for the user's response! After the user
+                                    // sees the explanation, try again to request the permission.
+
+                                } else {
+
+                                    // No explanation needed, we can request the permission.
+
+                                    getActivity().requestPermissions(
+                                            new String[]{android.Manifest.permission.CAMERA},
+                                           1);
+
+                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                                    // app-defined int constant. The callback method gets the
+                                    // result of the request.
+                                }
+
+                            }
+                        }
+                    } else   getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+
+
+
+
                 } else dismiss();
                 break;
             case R.id.dialog_choose_photo:

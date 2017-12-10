@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import info.upump.wardrobe3.model.MainMenuItem;
+import info.upump.wardrobe3.model.SubItem;
 
 /**
  * Created by explo on 26.10.2017.
@@ -44,6 +45,13 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
 
     @Override
     public Long delete(MainMenuItem item) {
+        SubItem subItem = new SubItem();
+        subItem.setIdMainItem(item.getId());
+        SubItemTableDao dao = new SubItemTableDao(context);
+
+        dao.deleteAllByParentId(subItem);
+
+
         return (long) database.delete(DataBaseHelper.TABLE_MAIN_MENU, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
 
     }
@@ -69,6 +77,11 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
       return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
 
+    }
+
+    @Override
+    public void deleteAllByParentId(MainMenuItem object) {
+        //NOP
     }
 
     @Override

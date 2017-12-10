@@ -1,6 +1,7 @@
 package info.upump.wardrobe3.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,20 +30,10 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
     private Activity activity;
     private static final Bitmap DEAFAULT_PHOTO = Bitmap.createBitmap(300, 300,
             Bitmap.Config.ARGB_8888);
-
-
-    private Bitmap bitmapMask;
-    //
     private int enumMaskOrdinal = 0;
     private static final int MASK_WIDTH = 300;
     private static final int MASK_HEIGHT = 300;
 
-
-    /*    public SubItemAdapter(List<SubItem> subItemList, Activity activity) {
-            this.subItemList = subItemList;
-            this.activity = activity;
-          //  this.bitmapMask = Bitmap.createScaledBitmap(Bitmap.createBitmap(BitmapFactory.decodeResource(activity.getResources(), R.drawable.mask_circle)), 300, 300, false);
-        }*/
     public SubItemAdapter(List<SubItem> subItemList, Activity activity, int enumMask) {
         this.subItemList = subItemList;
         this.activity = activity;
@@ -56,50 +48,20 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
     @Override
     public void onBindViewHolder(final SubItemViewHolder holder, int position) {
-        //holder.imageView.setImageDrawable(null);
-
-        //  holder.linearLayout.removeAllViews();
-        //   holder.setIsRecyclable(false);
-       /* Bitmap result = Bitmap.createBitmap(bitmapMask.getWidth(), bitmapMask.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas mCanvas = new Canvas(result);
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-
-
-        System.out.println("v adaptere img " + subItemList.get(position).getImg());
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(subItemList.get(position).getImg()));
-
-            mCanvas.drawBitmap(bitmap, 0, 0, null);
-            mCanvas.drawBitmap(bitmapMask, 0, 0, paint);
-            paint.setXfermode(null);
-            holder.imageView.setImageBitmap(result);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
         holder.imageView.setImageBitmap(createMask(subItemList.get(position)));
-
-        //   GetPhotoWithMaskAsynk getPhotoWithMaskAsynk = new GetPhotoWithMaskAsynk(holder, subItemList, bitmapMask, activity);
-        // getPhotoWithMaskAsynk.execute(position);
-
-
         holder.textView.setText(subItemList.get(position).getName());
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO открытие деталей
             }
         });
-
     }
-
 
     @Override
     public int getItemCount() {
         return subItemList.size();
     }
-
 
     @Override
     public Bitmap createMask(SubItem subItem) {
@@ -117,7 +79,16 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
         try {
             Bitmap bitmap;
             if (subItem.getImg() != null) {
-                bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), Uri.parse(subItem.getImg()));
+                //получаем картинку из URI и приводим ее к нужному размеру для кардвью
+                try {
+                    Uri uriImg = Uri.parse(subItem.getImg());
+
+
+                    bitmap = Bitmap.createScaledBitmap(MediaStore.Images.Media.getBitmap(activity.getContentResolver(),uriImg), MASK_HEIGHT, MASK_WIDTH, true);
+                }catch (FileNotFoundException e){
+                    bitmap = DEAFAULT_PHOTO;
+                    bitmap.eraseColor(Color.BLUE);
+                }
             } else {
                 bitmap = DEAFAULT_PHOTO;
                 bitmap.eraseColor(Color.BLUE);
@@ -128,7 +99,6 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return result;
     }
 }

@@ -3,7 +3,9 @@ package info.upump.wardrobe3.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 
+import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
 
 /**
@@ -42,6 +44,12 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
 
     @Override
     public Long delete(SubItem item) {
+       /* Uri uri;
+        if(item.getImg()!=null) {
+            uri = Uri.parse(item.getImg());
+            context.getContentResolver().delete(uri, null, null);
+        }*/
+
         return (long) database.delete(DataBaseHelper.TABLE_SUB_ITEM, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
     }
 
@@ -70,6 +78,12 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
     }
 
     @Override
+    public void deleteAllByParentId(SubItem item) {
+        database.delete(DataBaseHelper.TABLE_SUB_ITEM, DataBaseHelper.TABLE_KEY_ID_MAIN + "=" + item.getIdMainItem(), null);
+
+    }
+
+    @Override
     public Cursor getByParentId(long id) {
         System.out.println("id  v dao "+id);
         return database.query(DataBaseHelper.TABLE_SUB_ITEM,
@@ -82,4 +96,6 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
                         DataBaseHelper.TABLE_KEY_DESCRIPTION},
                 DataBaseHelper.TABLE_KEY_ID_MAIN + "=? ", new String[]{String.valueOf(id)}, null, null, null, null);
     }
+
+
 }

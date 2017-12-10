@@ -7,5 +7,6 @@ import android.content.Intent;
  */
 
 public interface ViewDetailController {
-    Intent createResultIntent();
+    Intent createResultIntentOk();
+    Intent createResultIntentCancel();
 }
