@@ -18,4 +18,5 @@ public interface ViewFragmentController<T> {
     void cancelUpdate();
     long getIdDb();
 
+
 }

@@ -8,5 +8,9 @@ import android.support.v4.app.Fragment;
 
 public interface FragmentController {
     Fragment getCurrentFragment();
+
+
+    void setCurrentFragment(Fragment fragment);
+
     long getIdItemCurrentFragment();
 }

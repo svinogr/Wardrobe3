@@ -25,11 +25,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     private List<MainMenuItem> mainMenuItemList;
     private MainMenuViewHolder mHolder;
     private Activity activity;
+    private FragmentController fragmentController;
 
 
     public MainAdapter(List<MainMenuItem> mainMenuItemList, Activity activity) {
         this.mainMenuItemList = mainMenuItemList;
         this.activity = activity;
+        if(activity instanceof FragmentController){
+            fragmentController = (FragmentController)activity;
+        }
     }
 
     @Override
@@ -54,11 +58,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
 
                 SubFragment fragment = new SubFragment();
                 fragment.setArguments(bundle);
-                FragmentTransaction fragmentTransaction = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
+             /*   FragmentTransaction fragmentTransaction = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                 fragmentTransaction.replace(R.id.mainContainer, fragment, SubFragment.TAG);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                fragmentTransaction.addToBackStack(null);*/
+                fragmentController.setCurrentFragment(fragment);
+                System.out.println(fragment.getTag());
+             /*   fragmentTransaction.commit();*/
 
             }
         });

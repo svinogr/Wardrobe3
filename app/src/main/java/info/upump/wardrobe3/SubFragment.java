@@ -242,6 +242,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         return idParent;
     }
 
+
     @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
        idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
@@ -257,7 +258,6 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         System.out.println("onLoadFinished-Sub");
         subItemList.clear();
         subItemList.addAll(data);
-       // subItemAdapter.notifyDataSetChanged();
         subItemAdapter.notifyDataSetChanged();    }
 
     @Override
@@ -304,7 +304,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     @Override
     public void onDetach() {
         super.onDetach();
-        subItemList = null;
+      //  subItemList = null;
         System.out.println("onDetach");
     }
 }

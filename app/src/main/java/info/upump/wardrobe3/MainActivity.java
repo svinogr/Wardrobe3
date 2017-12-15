@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, FragmentController {
     public static final int DETAIL_SUB_ACTIVITY_ITEM_RESULT = 100;
     public static final int DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
+    private final static String FRAGMENT_TAG = "fragmentTag";
+    private final static String VISIBLE_FRAGMENT="visibleFragment";
     private FragmentTransaction fragmentTransaction;
     private Fragment fragment;
     private String fragmentTag;
@@ -54,18 +57,31 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment visibleFragment = getSupportFragmentManager().findFragmentByTag(VISIBLE_FRAGMENT);
+                if(visibleFragment instanceof MainFragment){
+                    fragmentTag = MainFragment.TAG;
+                }
+                if(visibleFragment instanceof SubFragment){
+                    fragmentTag = SubFragment.TAG;
+                }
+                fragment = visibleFragment;
+            }
+        });
 
         if (savedInstanceState == null) {
 
-            fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-
             fragment = new MainFragment();
             fragmentTag = MainFragment.TAG;
+            setCurrentFragment(fragment);
 
+          /*  fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
             fragmentTransaction.replace(R.id.mainContainer, fragment, fragmentTag);
-            fragmentTransaction.commit();
-        }
+            fragmentTransaction.commit();*/
+        } else fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
 
 
     }
@@ -129,15 +145,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        Fragment currentFragment = getCurrentFragment();
-        if (currentFragment == null
-                ) return;
-        fragmentTag = currentFragment.getTag();
-        System.out.println("mTag  " + fragmentTag);
-        DialogFragment dialogFragment;
         Bundle bundle;
         switch (fragmentTag) {
             case MainFragment.TAG:
+                DialogFragment dialogFragment;
                 dialogFragment = new MainItemDialog();
                 bundle = new Bundle();
                 bundle.putInt("operation", MainItemOperationAsync.SAVE);
@@ -151,13 +162,13 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, DETAIL_SUB_ACTIVITY_ITEM_RESULT);
                 break;*/
             case SubFragment.TAG:
-                  fragment = new SubItemDetailFragment();
+                fragment = new SubItemDetailFragment();
                 bundle = new Bundle();
                 bundle.putLong("idSubItem", getCurrentFragment().getId());
                 fragment.setArguments(bundle);
                 fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                fragmentTransaction.replace(R.id.mainContainer, fragment);
+                fragmentTransaction.replace(R.id.mainContainer, fragment,VISIBLE_FRAGMENT);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;
@@ -169,29 +180,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Fragment getCurrentFragment() {
-      /*  List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        Fragment fragment = null;
-        System.out.println("колво " + fragments.size());
-        for (Fragment f : fragments) {
-            if (f != null) {
-*//*
-                System.out.println("1 "+f.isVisible());
-                System.out.println(" 2"+f.isResumed());
-                System.out.println("3 "+f.isHidden());
-                System.out.println(" 4"+f.isDetached());
-                System.out.println("5 "+f.isAdded());
-                System.out.println(" 6"+f.isStateSaved());
-                System.out.println(" 7"+f.isRemoving());
-                System.out.println(" 8"+f.getTag());*//*
-                if (f.isVisible()) {
-                    System.out.println("текущ " + f.getTag());
-                    fragment = f;
-
-                }
-            }
-        }*/
 
         return fragment;
+    }
+
+    @Override
+    public void setCurrentFragment(Fragment fragment) {
+        this.fragment = fragment;
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        fragmentTransaction.replace(R.id.mainContainer, fragment, VISIBLE_FRAGMENT);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
     }
 
     @Override
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {
             return;
@@ -264,7 +265,7 @@ public class MainActivity extends AppCompatActivity
 
                 }
                 break;
-        }
+        }*/
 
 /*
         if (resultCode == RESULT_OK) {
@@ -307,6 +308,11 @@ public class MainActivity extends AppCompatActivity
             }
 
         }*/
-    }
+    //   }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(FRAGMENT_TAG, fragmentTag);
+    }
 }
