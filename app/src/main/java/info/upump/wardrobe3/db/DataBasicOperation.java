@@ -18,4 +18,5 @@ public interface DataBasicOperation<T> {
     void deleteAllByParentId(T object);
 
     Cursor getByParentId(long id);
+    Cursor getById(long id);
 }

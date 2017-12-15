@@ -88,4 +88,9 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
     public Cursor getByParentId(long id) {
         return null;
     }
+
+    @Override
+    public Cursor getById(long id) {
+        return null;
+    }
 }

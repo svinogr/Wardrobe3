@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swap"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content">-->
 
     <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sub_item_card"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -13,14 +15,15 @@
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
         android:elevation="10dp"
+
         app:cardCornerRadius="7dp">
 
-        <LinearLayout
+     <!--   <LinearLayout
             android:id="@+id/sub_item_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal">-->
 
 
                 <ImageView
@@ -46,7 +49,7 @@
                 android:paddingBottom="2dp"
                 android:text="HHHHHHHHHH"
                 android:textSize="26sp" />
-        </LinearLayout>
-
+      <!--  </LinearLayout>
+-->
     </android.support.v7.widget.CardView>
-</LinearLayout>
+<!--</LinearLayout>-->

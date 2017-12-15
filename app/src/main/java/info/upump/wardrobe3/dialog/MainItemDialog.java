@@ -111,7 +111,9 @@ public class MainItemDialog extends DialogFragment {
 
     private AlertDialog.Builder createSaveDialog() {
         System.out.println("createUpdateDialog");
+
         builder.setTitle(R.string.title_dialog_new_main_item);
+
         builder.setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

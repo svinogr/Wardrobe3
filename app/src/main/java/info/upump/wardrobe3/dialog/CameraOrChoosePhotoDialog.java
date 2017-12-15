@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -19,10 +20,10 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubItemDetail;
+import info.upump.wardrobe3.model.SubItem;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
@@ -33,6 +34,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     private File file;
     private Uri uri;
     private File directory;
+    private static final int PERMISION_CAMERA_CODE = 0;
 
     @Override
     public void onAttach(Context context) {
@@ -71,55 +73,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dialog_camera:
-                Uri uri = generateUriPhoto();
-                if (uri != null) {
-
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                    cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-                            | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-                    List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                    for (ResolveInfo resolveInfo : resInfoList) {
-                        String packageName = resolveInfo.activityInfo.packageName;
-                        System.out.println("pacake name" +packageName);
-                        getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        {
-                            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                System.out.println("hjdgdgdgdgdgdgdgdgdg");
-                               // getActivity().requestPermissions(new String[]{android.Manifest.permission.CAMERA}, 1);
-                                if (getActivity().shouldShowRequestPermissionRationale(
-                                        android.Manifest.permission.CAMERA)) {
-                                    getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
-
-                                    // Show an explanation to the user *asynchronously* -- don't block
-                                    // this thread waiting for the user's response! After the user
-                                    // sees the explanation, try again to request the permission.
-
-                                } else {
-
-                                    // No explanation needed, we can request the permission.
-
-                                    getActivity().requestPermissions(
-                                            new String[]{android.Manifest.permission.CAMERA},
-                                           1);
-
-                                    // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                                    // app-defined int constant. The callback method gets the
-                                    // result of the request.
-                                }
-
-                            }
-                        }
-                    } else   getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
-
-
-
-
-                } else dismiss();
+                    checkVersion();
                 break;
             case R.id.dialog_choose_photo:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -127,6 +81,54 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
                 getActivity().startActivityForResult(photoPickerIntent, SubItemDetail.CHOOSE_PHOTO_RESULT);
                 break;
         }
+    }
+
+    private void checkVersion() {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA}, PERMISION_CAMERA_CODE);
+            } else takePhoto();
+
+        }else takePhoto();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//проверяем ответ юзера
+        switch (requestCode) {
+            case PERMISION_CAMERA_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    System.out.println("granted");
+                    takePhoto();
+
+                } else {
+                    System.out.println("denied");
+                    dismiss();
+                }
+        }
+
+
+    }
+
+    private void takePhoto() {
+        Uri uri = generateUriPhoto();
+        if (uri != null) {
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+            }
+
+
+        }else dismiss();
     }
 
     private Uri generateUriPhoto() {
@@ -137,7 +139,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
 
 
             String aut = getActivity().getPackageName() + ".fileprovider";
-         //   String aut = getActivity().getPackageName() ;
+            //   String aut = getActivity().getPackageName() ;
             uri = getUriForFile(getActivity(), aut, file);
             System.out.println("v dialogr uri " + uri);
 
@@ -160,8 +162,8 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String name = "photo_" +  System.currentTimeMillis();
-        System.out.println("имя "+name);
+        String name = "photo_" + System.currentTimeMillis();
+        System.out.println("имя " + name);
         File file = null;
         try {
             file = File.createTempFile(

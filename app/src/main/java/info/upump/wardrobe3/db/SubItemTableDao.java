@@ -97,5 +97,18 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
                 DataBaseHelper.TABLE_KEY_ID_MAIN + "=? ", new String[]{String.valueOf(id)}, null, null, null, null);
     }
 
+    @Override
+    public Cursor getById(long id){
+        return database.query(DataBaseHelper.TABLE_SUB_ITEM,
+                new String[]{
+                        DataBaseHelper.TABLE_KEY_ID,
+                        DataBaseHelper.TABLE_KEY_NAME,
+                        DataBaseHelper.TABLE_KEY_IMG,
+                        DataBaseHelper.TABLE_KEY_COST,
+                        DataBaseHelper.TABLE_KEY_ID_MAIN,
+                        DataBaseHelper.TABLE_KEY_DESCRIPTION},
+                DataBaseHelper.TABLE_KEY_ID + "=? ", new String[]{String.valueOf(id)}, null, null, null, null);
+    }
+
 
 }

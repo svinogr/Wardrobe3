@@ -144,11 +144,22 @@ public class MainActivity extends AppCompatActivity
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(getFragmentManager(), MainItemDialog.TAG);
                 break;
-            case SubFragment.TAG:
+         /*   case SubFragment.TAG:
                 Intent intent = new Intent(this, SubItemDetail.class);
                 long id = getIdItemCurrentFragment();
                 intent.putExtra("id", id);
                 startActivityForResult(intent, DETAIL_SUB_ACTIVITY_ITEM_RESULT);
+                break;*/
+            case SubFragment.TAG:
+                  fragment = new SubItemDetailFragment();
+                bundle = new Bundle();
+                bundle.putLong("idSubItem", getCurrentFragment().getId());
+                fragment.setArguments(bundle);
+                fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                fragmentTransaction.replace(R.id.mainContainer, fragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
                 break;
 
         }
