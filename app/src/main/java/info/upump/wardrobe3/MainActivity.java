@@ -169,12 +169,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Fragment getCurrentFragment() {
-        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+      /*  List<Fragment> fragments = getSupportFragmentManager().getFragments();
         Fragment fragment = null;
         System.out.println("колво " + fragments.size());
         for (Fragment f : fragments) {
             if (f != null) {
-/*
+*//*
                 System.out.println("1 "+f.isVisible());
                 System.out.println(" 2"+f.isResumed());
                 System.out.println("3 "+f.isHidden());
@@ -182,24 +182,24 @@ public class MainActivity extends AppCompatActivity
                 System.out.println("5 "+f.isAdded());
                 System.out.println(" 6"+f.isStateSaved());
                 System.out.println(" 7"+f.isRemoving());
-                System.out.println(" 8"+f.getTag());*/
+                System.out.println(" 8"+f.getTag());*//*
                 if (f.isVisible()) {
                     System.out.println("текущ " + f.getTag());
                     fragment = f;
 
                 }
             }
-        }
+        }*/
 
         return fragment;
     }
 
     @Override
     public long getIdItemCurrentFragment() {
-        SubFragment fragment = (SubFragment) getCurrentFragment();
+        ViewFragmentController fragment = (ViewFragmentController) getCurrentFragment();
         if (fragment != null) {
-            System.out.println("id parent " + fragment.getIdParent());
-            return fragment.getIdParent();
+            System.out.println("id parent " + fragment.getIdDb());
+            return fragment.getIdDb();
         }
         return -1;
     }

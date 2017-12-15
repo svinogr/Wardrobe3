@@ -285,5 +285,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     }
 
+    @Override
+    public long getIdDb() {
+        return 0;
+    }
+
 
 }

@@ -16,4 +16,6 @@ public interface ViewFragmentController<T> {
     void editItem(int positionMainItem);
 
     void cancelUpdate();
+    long getIdDb();
+
 }

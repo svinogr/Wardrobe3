@@ -238,6 +238,11 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     }
 
     @Override
+    public long getIdDb() {
+        return idParent;
+    }
+
+    @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
        idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
         // test enum

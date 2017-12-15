@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -30,16 +29,15 @@ public class MainItemDialog extends DialogFragment {
     private AlertDialog.Builder builder;
     private Spinner spiner;
 
+    private ViewFragmentController viewFragmentController;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        System.out.println("onAttach");
 
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (getActivity() instanceof FragmentController) {
+            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+        }
         System.out.println("onCreateDialog");
 
         int operation = getArguments().getInt("operation");
@@ -49,6 +47,7 @@ public class MainItemDialog extends DialogFragment {
 
         View inflate = layoutInflater.inflate(R.layout.dailog_fragment_main_add_item, null);
         textNameItem = inflate.findViewById(R.id.editTextForMainItemDialog);
+
         spiner = inflate.findViewById(R.id.spinnerForMainItemDialog);
         EnumMask[] values = EnumMask.values();
         String[] spinnerData = new String[values.length];
@@ -58,7 +57,6 @@ public class MainItemDialog extends DialogFragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spiner.setAdapter(adapter);
-
 
 
         builder.setView(inflate);
@@ -90,17 +88,15 @@ public class MainItemDialog extends DialogFragment {
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
                         mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
-
-                        ViewFragmentController viewFragmentController = getViewFragmentController();
-                        viewFragmentController.updateItem(mainMenuItem);
-
+                          if(viewFragmentController!=null) {
+                              viewFragmentController.updateItem(mainMenuItem);
+                          }
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
-                        ViewFragmentController viewFragmentController = getViewFragmentController();
 
                         viewFragmentController.cancelUpdate();
                     }
@@ -128,11 +124,12 @@ public class MainItemDialog extends DialogFragment {
                 MainMenuItem mainMenuItem = new MainMenuItem();
                 mainMenuItem.setName(nameOfNewItem);
                 // test enum
-              //  mainMenuItem.setEnumMask(EnumMask.TSHORT);
+                //  mainMenuItem.setEnumMask(EnumMask.TSHORT);
                 mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
-                ViewFragmentController viewFragmentController = getViewFragmentController();
-                viewFragmentController.addNewItem(mainMenuItem);
+                if(viewFragmentController!=null) {
+                    viewFragmentController.addNewItem(mainMenuItem);
+                }
             }
         });
         builder.setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -146,9 +143,6 @@ public class MainItemDialog extends DialogFragment {
 
     }
 
-    private ViewFragmentController getViewFragmentController() {
-        FragmentController fragmentController = (FragmentController) getActivity();
-        return (ViewFragmentController) fragmentController.getCurrentFragment();
-    }
+
 
 }
