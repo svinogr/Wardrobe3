@@ -147,6 +147,7 @@ public class MainItemDialog extends DialogFragment {
 
                 MainMenuItem mainMenuItem = new MainMenuItem();
                 mainMenuItem.setName(nameOfNewItem);
+                System.out.println("EnumMask.values( "+EnumMask.values()[selectedSpinnerPosition].ordinal());
                 mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
                 if (viewFragmentController != null) {

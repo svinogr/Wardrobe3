@@ -43,7 +43,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MainMenuViewHolder holder, final int position) {
+    public void onBindViewHolder(MainMenuViewHolder holder, int position) {
         final long id = mainMenuItemList.get(position).getId();
         final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
 
@@ -64,7 +64,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
             }
         });
 
-        holder.name.setText(mainMenuItemList.get(position).getName());
+
 
     }
 

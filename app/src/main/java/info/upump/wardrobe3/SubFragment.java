@@ -72,18 +72,18 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         return root;
     }
 
-    @Override
+    /*@Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(0, null, this);
-    }
+    }*/
 
-   /* @Override
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         getLoaderManager().initLoader(0, null, this);
 
-    }*/
+    }
 
     @Override
     public void addNewItem(SubItem object) {

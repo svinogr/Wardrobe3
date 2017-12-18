@@ -113,7 +113,7 @@ public class SubItemDialog extends DialogFragment {
 
             }while (byId.moveToNext());
         }
-        subItemTableDao.close();
+       // subItemTableDao.close();
         System.out.println("createSaveSubDialog");
       /*  name.setText(getArguments().getString(Constants.NAME));
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));

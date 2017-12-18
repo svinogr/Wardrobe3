@@ -43,6 +43,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
     public SubItemAdapter(List<SubItem> subItemList, Activity activity, int enumMask) {
         this.subItemList = subItemList;
         this.activity = (AppCompatActivity) activity;
+        System.out.println("enumMask "+enumMask);
         this.enumMaskOrdinal = enumMask;
     }
 
@@ -64,7 +65,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
                 Bundle bundle = new Bundle();
                 bundle.putInt(OperationAsync.OPERATION, OperationAsync.OPEN);
                 bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
-                bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+                bundle.putLong(Constants.ID, subItem.getId());
                 bundle.putString(Constants.NAME, subItem.getName());
                 bundle.putFloat(Constants.COST, subItem.getCost());
                 bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
@@ -84,10 +85,10 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
     @Override
     public Bitmap createMask(SubItem subItem) {
-
+        System.out.println("masl"+ enumMaskOrdinal);
         EnumMask enumMask = EnumMask.values()[enumMaskOrdinal];
         int resourceMask = enumMask.getResource();
-
+        System.out.println(resourceMask);
         Bitmap bitmapMask = Bitmap.createScaledBitmap(Bitmap.createBitmap(
                 BitmapFactory.decodeResource(activity.getResources(), resourceMask)), MASK_WIDTH, MASK_HEIGHT, false);
 
@@ -114,7 +115,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
             }
             mCanvas.drawBitmap(bitmap, 0, 0, null);
             mCanvas.drawBitmap(bitmapMask, 0, 0, paint);
-            paint.setXfermode(null);
+           // paint.setXfermode(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
