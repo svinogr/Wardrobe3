@@ -1,11 +1,11 @@
 package info.upump.wardrobe3;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,8 +23,11 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 
+import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
+import info.upump.wardrobe3.dialog.OperationAsync;
+import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.dialog.SubItemOperationAsync;
 import info.upump.wardrobe3.model.SubItem;
 
@@ -33,8 +36,9 @@ public class MainActivity extends AppCompatActivity
     public static final int DETAIL_SUB_ACTIVITY_ITEM_RESULT = 100;
     public static final int DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
     private final static String FRAGMENT_TAG = "fragmentTag";
-    private final static String VISIBLE_FRAGMENT="visibleFragment";
+    private final static String VISIBLE_FRAGMENT = "visibleFragment";
     private FragmentTransaction fragmentTransaction;
+    public ViewFragmentController viewFragmentController;
     private Fragment fragment;
     private String fragmentTag;
 
@@ -57,14 +61,14 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
                 Fragment visibleFragment = getSupportFragmentManager().findFragmentByTag(VISIBLE_FRAGMENT);
-                if(visibleFragment instanceof MainFragment){
+                if (visibleFragment instanceof MainFragment) {
                     fragmentTag = MainFragment.TAG;
                 }
-                if(visibleFragment instanceof SubFragment){
+                if (visibleFragment instanceof SubFragment) {
                     fragmentTag = SubFragment.TAG;
                 }
                 fragment = visibleFragment;
@@ -76,12 +80,12 @@ public class MainActivity extends AppCompatActivity
             fragment = new MainFragment();
             fragmentTag = MainFragment.TAG;
             setCurrentFragment(fragment);
+        } else {
+            fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
+            viewFragmentController = (ViewFragmentController) fragment;
 
-          /*  fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-            fragmentTransaction.replace(R.id.mainContainer, fragment, fragmentTag);
-            fragmentTransaction.commit();*/
-        } else fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
+        }
 
 
     }
@@ -146,14 +150,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         Bundle bundle;
+        DialogFragment dialogFragment;
         switch (fragmentTag) {
             case MainFragment.TAG:
-                DialogFragment dialogFragment;
+
                 dialogFragment = new MainItemDialog();
                 bundle = new Bundle();
-                bundle.putInt("operation", MainItemOperationAsync.SAVE);
+                bundle.putInt(OperationAsync.OPERATION, OperationAsync.SAVE);
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show(getFragmentManager(), MainItemDialog.TAG);
+                dialogFragment.show(getSupportFragmentManager(), MainItemDialog.TAG);
                 break;
          /*   case SubFragment.TAG:
                 Intent intent = new Intent(this, SubItemDetail.class);
@@ -162,15 +167,12 @@ public class MainActivity extends AppCompatActivity
                 startActivityForResult(intent, DETAIL_SUB_ACTIVITY_ITEM_RESULT);
                 break;*/
             case SubFragment.TAG:
-                fragment = new SubItemDetailFragment();
+                dialogFragment = new SubItemDialog();
                 bundle = new Bundle();
-                bundle.putLong("idSubItem", getCurrentFragment().getId());
-                fragment.setArguments(bundle);
-                fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                fragmentTransaction.replace(R.id.mainContainer, fragment,VISIBLE_FRAGMENT);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                bundle.putInt(OperationAsync.OPERATION, OperationAsync.SAVE);
+                bundle.putLong(Constants.ID_PARENT, getIdItemCurrentFragment());
+                dialogFragment.setArguments(bundle);
+                dialogFragment.show(getSupportFragmentManager(), SubItemDialog.TAG);
                 break;
 
         }
@@ -190,7 +192,12 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.replace(R.id.mainContainer, fragment, VISIBLE_FRAGMENT);
-        fragmentTransaction.addToBackStack(null);
+        if(fragment instanceof ViewFragmentController){
+            viewFragmentController = (ViewFragmentController) fragment;
+        }
+        if (!(fragment instanceof MainFragment)) {
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.commit();
 
     }
@@ -204,6 +211,10 @@ public class MainActivity extends AppCompatActivity
         }
         return -1;
     }
+
+    @Override
+    public ViewFragmentController getViewFragmentController() {
+        return viewFragmentController;    }
 
 
    /* @Override

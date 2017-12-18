@@ -13,4 +13,5 @@ public interface FragmentController {
     void setCurrentFragment(Fragment fragment);
 
     long getIdItemCurrentFragment();
+    ViewFragmentController getViewFragmentController();
 }

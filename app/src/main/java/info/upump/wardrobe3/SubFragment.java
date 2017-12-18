@@ -1,5 +1,7 @@
 package info.upump.wardrobe3;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,7 +23,10 @@ import java.util.concurrent.ExecutionException;
 
 import info.upump.wardrobe3.adapter.SubItemAdapter;
 import info.upump.wardrobe3.callback.SwipeCallback;
+import info.upump.wardrobe3.dialog.Constants;
+import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.OperationAsync;
+import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.dialog.SubItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderSubItem;
 import info.upump.wardrobe3.model.SubItem;
@@ -50,10 +55,10 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         System.out.println("из фрагме " + idParent);
         View root = inflater.inflate(R.layout.fragment_sub_item, container, false);
 
-       /// subItemAdapter = new SubItemAdapter(subItemList, getActivity());
+        /// subItemAdapter = new SubItemAdapter(subItemList, getActivity());
         //test enum
 
-        subItemAdapter = new SubItemAdapter(subItemList, getActivity(), resourceMask );
+        subItemAdapter = new SubItemAdapter(subItemList, getActivity(), resourceMask);
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
@@ -133,7 +138,6 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         }
 
 
-
     }
 
     @Override
@@ -178,7 +182,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public void showSnackBar() {
-        Snackbar.make(getView(),getString(R.string.action_to_delite_item_snack_bar), Snackbar.LENGTH_LONG )
+        Snackbar.make(getView(), getString(R.string.action_to_delite_item_snack_bar), Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_snak_bar_undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -191,8 +195,8 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public void snackBarUndo() {
-        if(tempSubItem != null){
-            SubItemOperationAsync subItemOperationAsync = new SubItemOperationAsync(getContext(),OperationAsync.INSERT);
+        if (tempSubItem != null) {
+            SubItemOperationAsync subItemOperationAsync = new SubItemOperationAsync(getContext(), OperationAsync.INSERT);
             subItemOperationAsync.execute(tempSubItem);
             long resultInsert;
             try {
@@ -204,11 +208,10 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
                 e.printStackTrace();
                 resultInsert = 0;
             }
-            if(resultInsert>-1){
+            if (resultInsert > -1) {
                 System.out.println(resultInsert);
-                subItemList.add(tempPositionSubItem,tempSubItem);
+                subItemList.add(tempPositionSubItem, tempSubItem);
                 subItemAdapter.notifyItemInserted(tempPositionSubItem);
-                // mainAdapter.notifyItemChanged(temPositionMainItem);
                 tempSubItem = null;
                 tempPositionSubItem = 0;
             }
@@ -217,23 +220,28 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public void editItem(int positionSubItem) {
+        tempPositionSubItem = positionSubItem;
         SubItem subItem = subItemList.get(positionSubItem);
-        Intent intent = new Intent(getContext(), SubItemDetail.class);
-        intent.putExtra("id", subItem.getId());
-        intent.putExtra("name", subItem.getName());
-        intent.putExtra("image", subItem.getImg());
-        System.out.println(subItem.getCost());
-        intent.putExtra("cost", String.valueOf(subItem.getCost()));
-        intent.putExtra("description", subItem.getDescription());
-        intent.putExtra("idMainItem", subItem.getIdMainItem());
-        intent.putExtra("edit", SubItemDetail.EDIT);
-        getActivity().startActivityForResult(intent, MainActivity.DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(OperationAsync.OPERATION, OperationAsync.UPDATE);
+        bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+        bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+        bundle.putString(Constants.NAME, subItem.getName());
+        bundle.putFloat(Constants.COST, subItem.getCost());
+        bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
+        bundle.putString(Constants.IMG, subItem.getImg());
+
+        SubItemDialog dialogFragment = new SubItemDialog();
+        dialogFragment.setArguments(bundle);
+        dialogFragment.show(getActivity().getSupportFragmentManager(), MainItemDialog.TAG);
 
     }
 
     @Override
     public void cancelUpdate() {
-        //ненужно так как на экране не видно фрагмента, а видно детефд активити
+        subItemAdapter.notifyItemChanged(tempPositionSubItem);
+        tempPositionSubItem = 0;
 
     }
 
@@ -245,9 +253,9 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
-       idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
+        idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
         // test enum
-        resourceMask =  getArguments().getInt("resourceMask");
+        resourceMask = getArguments().getInt("resourceMask");
         System.out.println("coplfybt kjflthf " + idParent);
         loaderSubItem = new LoaderSubItem(getContext(), idParent);
         return loaderSubItem;
@@ -258,21 +266,13 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         System.out.println("onLoadFinished-Sub");
         subItemList.clear();
         subItemList.addAll(data);
-        subItemAdapter.notifyDataSetChanged();    }
+        subItemAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onLoaderReset(Loader<List<SubItem>> loader) {
 
     }
-
-    public long getIdParent() {
-        return idParent;
-    }
-
-    public void setIdParent(long idParent) {
-        this.idParent = idParent;
-    }
-
 
 
     @Override
@@ -296,7 +296,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     @Override
     public void onStop() {
         super.onStop();
-       // onLoaderReset(loaderSubItem);
+        // onLoaderReset(loaderSubItem);
 
         System.out.println("onStop");
     }
@@ -304,7 +304,11 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     @Override
     public void onDetach() {
         super.onDetach();
-      //  subItemList = null;
+        //  subItemList = null;
         System.out.println("onDetach");
+    }
+
+    public long getIdParent() {
+        return idParent;
     }
 }

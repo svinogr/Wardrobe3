@@ -1,7 +1,7 @@
 package info.upump.wardrobe3.adapter;
 
+
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,7 +10,9 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +23,17 @@ import java.io.IOException;
 import java.util.List;
 
 import info.upump.wardrobe3.R;
+import info.upump.wardrobe3.dialog.Constants;
+import info.upump.wardrobe3.dialog.MainItemDialog;
+import info.upump.wardrobe3.dialog.OperationAsync;
+import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.SubItem;
 import info.upump.wardrobe3.model.SubItemViewHolder;
 
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> implements MaskCreator {
     private List<SubItem> subItemList;
-    private Activity activity;
+    private AppCompatActivity activity;
     private static final Bitmap DEAFAULT_PHOTO = Bitmap.createBitmap(300, 300,
             Bitmap.Config.ARGB_8888);
     private int enumMaskOrdinal = 0;
@@ -36,7 +42,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
     public SubItemAdapter(List<SubItem> subItemList, Activity activity, int enumMask) {
         this.subItemList = subItemList;
-        this.activity = activity;
+        this.activity = (AppCompatActivity) activity;
         this.enumMaskOrdinal = enumMask;
     }
 
@@ -47,13 +53,26 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
     }
 
     @Override
-    public void onBindViewHolder(final SubItemViewHolder holder, int position) {
+    public void onBindViewHolder(final SubItemViewHolder holder, final int position) {
         holder.imageView.setImageBitmap(createMask(subItemList.get(position)));
         holder.textView.setText(subItemList.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO открытие деталей
+                SubItem subItem = subItemList.get(position);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(OperationAsync.OPERATION, OperationAsync.OPEN);
+                bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+                bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+                bundle.putString(Constants.NAME, subItem.getName());
+                bundle.putFloat(Constants.COST, subItem.getCost());
+                bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
+                bundle.putString(Constants.IMG, subItem.getImg());
+
+                SubItemDialog dialogFragment = new SubItemDialog();
+                dialogFragment.setArguments(bundle);
+                dialogFragment.show( activity.getSupportFragmentManager(), MainItemDialog.TAG);
             }
         });
     }

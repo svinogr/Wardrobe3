@@ -6,12 +6,17 @@
         android:id="@+id/editTextForMainItemDialog"
         android:layout_width="match_parent"
         android:layout_gravity="center_horizontal"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"/>
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
     <Spinner
         android:id="@+id/spinnerForMainItemDialog"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"/>
 
 
 </LinearLayout>

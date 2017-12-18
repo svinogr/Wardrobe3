@@ -19,4 +19,8 @@
     <string name="dialog_camera">Сделать фото</string>
     <string name="dialog_choose_photo">Выбрать фото</string>
     <string name="dialog_camera_or_chosse_title">Добавить изображение</string>
+    <string name="title_dialog_create_sub_item">новая вещь</string>
+    <string name="title_dialog_update_sub_item">изменить вещь</string>
+    <string name="negative_btn_dialog_sub_item_open_detail">закрыть</string>
+    <string name="title_dialog_sub_item_open_detail">просмотр</string>
 </resources>

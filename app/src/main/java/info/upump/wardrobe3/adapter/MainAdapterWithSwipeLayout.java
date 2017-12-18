@@ -1,3 +1,4 @@
+/*
 package info.upump.wardrobe3.adapter;
 
 import android.app.Activity;
@@ -21,9 +22,11 @@ import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.MainMenuViewHolder;
 import info.upump.wardrobe3.model.MainMenuViewHolderWithSwipeLayout;
 
+*/
 /**
  * Created by explo on 29.10.2017.
- */
+ *//*
+
 
 public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<MainMenuItem> mainMenuItemList;
@@ -51,7 +54,8 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
         mHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              /*  if (mHolder.swiped) {
+              */
+/*  if (mHolder.swiped) {
                 System.out.println(mainMenuItemList.get(position).getName());
                 System.out.println(mHolder.swiped);
                 //TODO переход на новый фрагмент
@@ -61,17 +65,20 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
                 fragmentTransaction.replace(R.id.mainContainer, fragment, SubFragment.TAG);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
-                }*/
+                }*//*
+
                 if(mHolder.swiped){
                     System.out.println("true "+mHolder.swiped);
                 } else  { System.out.println("false "+mHolder.swiped+position);
+*/
 /*
                     SubFragment fragment = new SubFragment();
                     FragmentTransaction fragmentTransaction = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                     fragmentTransaction.replace(R.id.mainContainer, fragment, SubFragment.TAG);
                     fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();*/
+                    fragmentTransaction.commit();*//*
+
                 }
             }
         });
@@ -81,27 +88,35 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
             @Override
             public void onStartOpen(SwipeLayout layout) {
             //    mHolder.swiped = true;
-           /*     System.out.println("onStartOpen");*/
+           */
+/*     System.out.println("onStartOpen");*//*
+
             }
 
             @Override
             public void onOpen(SwipeLayout layout) {
-         /*   //    mHolder.swiped = true;
+         */
+/*   //    mHolder.swiped = true;
                 System.out.println(mHolder.swiped );
-                System.out.println("onOpen");*/
+                System.out.println("onOpen");*//*
+
             }
 
             @Override
             public void onStartClose(SwipeLayout layout) {
-             /*   mHolder.swiped = false;
-                System.out.println("onStartClose");*/
+             */
+/*   mHolder.swiped = false;
+                System.out.println("onStartClose");*//*
+
             }
 
             @Override
             public void onClose(SwipeLayout layout) {
-              /*  mHolder.swiped = false;
+              */
+/*  mHolder.swiped = false;
                 System.out.println("onClose");
-                System.out.println(mHolder.swiped);*/
+                System.out.println(mHolder.swiped);*//*
+
             }
 
             @Override
@@ -112,7 +127,9 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
 
             @Override
             public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
-               /* System.out.println("onHandRelease");*/
+               */
+/* System.out.println("onHandRelease");*//*
+
 
 
             }
@@ -144,13 +161,13 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
             @Override
             public void onClick(View v) {
                 MainMenuItem mainMenuItem = mainMenuItemList.get(position);
-                DialogFragment dialogFragment = new MainItemDialog();
+                MainItemDialog dialogFragment = new MainItemDialog();
                 Bundle bundle = new Bundle();
                 bundle.putInt("operation", MainItemOperationAsync.UPDATE);
                 bundle.putLong("id", mainMenuItem.getId());
                 bundle.putString("name", mainMenuItem.getName());
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show(activity.getFragmentManager(), MainItemDialog.TAG);
+                dialogFragment.show(activity.  , MainItemDialog.TAG);
 
             }
         });
@@ -164,3 +181,4 @@ public class MainAdapterWithSwipeLayout extends RecyclerView.Adapter<RecyclerVie
 
 
 }
+*/

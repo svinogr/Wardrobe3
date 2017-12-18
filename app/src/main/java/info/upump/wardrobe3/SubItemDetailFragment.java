@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import info.upump.wardrobe3.db.DBDao;
 import info.upump.wardrobe3.db.SubItemTableDao;
 import info.upump.wardrobe3.model.SubItem;
 
@@ -37,7 +36,7 @@ public class SubItemDetailFragment extends Fragment implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
       //  idSubItem = getArguments().getLong("idSubItem");
-        View root = inflater.inflate(R.layout.fragment_sub_item_detail, container, false);
+        View root = inflater.inflate(R.layout.dialog_fragment_sub_item_detail, container, false);
         name = (EditText) root.findViewById(R.id.detail_name);
         cost = (EditText)root.findViewById(R.id.detail_cost);
         description = (EditText) root.findViewById(R.id.detail_description);

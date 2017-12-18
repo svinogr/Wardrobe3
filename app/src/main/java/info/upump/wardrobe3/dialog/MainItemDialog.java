@@ -2,10 +2,10 @@ package info.upump.wardrobe3.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,28 +27,46 @@ public class MainItemDialog extends DialogFragment {
     public EditText textNameItem;
     public static final String TAG = "dialogMain";
     private AlertDialog.Builder builder;
-    private Spinner spiner;
+    private Spinner spinner;
 
     private ViewFragmentController viewFragmentController;
 
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        System.out.println("onAttach");
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        System.out.println("onDetach");
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (getActivity() instanceof FragmentController) {
-            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
-        }
-        System.out.println("onCreateDialog");
+      //  setRetainInstance(true);
 
-        int operation = getArguments().getInt("operation");
+        if (getActivity() instanceof FragmentController) {
+            System.out.println(2);
+            viewFragmentController = (ViewFragmentController) ((FragmentController)getActivity()).getCurrentFragment();
+        }
+        System.out.println(viewFragmentController);
+
+        setCancelable(false);// запрещаем закрытие диалога кликом в путсоту
+
+        int operation = getArguments().getInt(OperationAsync.OPERATION);
 
         builder = new AlertDialog.Builder(getActivity());
+
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
         View inflate = layoutInflater.inflate(R.layout.dailog_fragment_main_add_item, null);
         textNameItem = inflate.findViewById(R.id.editTextForMainItemDialog);
+        spinner = inflate.findViewById(R.id.spinnerForMainItemDialog);
 
-        spiner = inflate.findViewById(R.id.spinnerForMainItemDialog);
         EnumMask[] values = EnumMask.values();
         String[] spinnerData = new String[values.length];
         for (int i = 0; i < values.length; i++) {
@@ -56,7 +74,7 @@ public class MainItemDialog extends DialogFragment {
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, spinnerData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spiner.setAdapter(adapter);
+        spinner.setAdapter(adapter);
 
 
         builder.setView(inflate);
@@ -83,21 +101,26 @@ public class MainItemDialog extends DialogFragment {
                         if (textNameItem.getText().toString().equals("")) {
                             return;
                         }
-                        int selectedSpinnerPosition = spiner.getSelectedItemPosition();
+                        int selectedSpinnerPosition = spinner.getSelectedItemPosition();
                         MainMenuItem mainMenuItem = new MainMenuItem();
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
                         mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
-                          if(viewFragmentController!=null) {
-                              viewFragmentController.updateItem(mainMenuItem);
-                          }
+                    /*    if (viewFragmentController == null) {
+                            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+                        }*/
+                        System.out.println(viewFragmentController);
+                        viewFragmentController.updateItem(mainMenuItem);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
-
+                        if (viewFragmentController == null) {
+                            viewFragmentController = ((FragmentController) getActivity()).getViewFragmentController();
+                        }
+                        System.out.println("отмена "+viewFragmentController);
                         viewFragmentController.cancelUpdate();
                     }
                 });
@@ -118,16 +141,13 @@ public class MainItemDialog extends DialogFragment {
                     return;
                 }
                 String nameOfNewItem = textNameItem.getText().toString();
-                int selectedSpinnerPosition = spiner.getSelectedItemPosition();
-
+                int selectedSpinnerPosition = spinner.getSelectedItemPosition();
 
                 MainMenuItem mainMenuItem = new MainMenuItem();
                 mainMenuItem.setName(nameOfNewItem);
-                // test enum
-                //  mainMenuItem.setEnumMask(EnumMask.TSHORT);
                 mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
-                if(viewFragmentController!=null) {
+                if (viewFragmentController != null) {
                     viewFragmentController.addNewItem(mainMenuItem);
                 }
             }
@@ -142,7 +162,6 @@ public class MainItemDialog extends DialogFragment {
         return builder;
 
     }
-
 
 
 }

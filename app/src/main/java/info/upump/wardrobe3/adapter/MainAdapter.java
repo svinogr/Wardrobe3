@@ -58,13 +58,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
 
                 SubFragment fragment = new SubFragment();
                 fragment.setArguments(bundle);
-             /*   FragmentTransaction fragmentTransaction = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                fragmentTransaction.replace(R.id.mainContainer, fragment, SubFragment.TAG);
-                fragmentTransaction.addToBackStack(null);*/
                 fragmentController.setCurrentFragment(fragment);
                 System.out.println(fragment.getTag());
-             /*   fragmentTransaction.commit();*/
 
             }
         });

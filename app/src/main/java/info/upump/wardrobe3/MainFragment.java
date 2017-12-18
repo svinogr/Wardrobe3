@@ -1,6 +1,5 @@
 package info.upump.wardrobe3;
 
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -51,7 +50,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
         mainAdapter = new MainAdapter(mainMenuItemList, getActivity());
-        //mainAdapter = new MainAdapterWithSwipeLayout(mainMenuItemList,getActivity());
+      //  mainAdapter = new MainAdapter(mainMenuItemList, getContext());
 
         recyclerView = root.findViewById(R.id.recycledFragmentMain);
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
@@ -65,7 +64,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private ItemTouchHelper.Callback createItemTouchHelperCallback() {
         ItemTouchHelper.Callback callback = new SwipeCallback(this);
-
         return callback;
     }
 
@@ -79,6 +77,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<List<MainMenuItem>> onCreateLoader(int id, Bundle args) {
+        System.out.println("создается лоадер");
         LoaderMainMenu loaderMainMenu = new LoaderMainMenu(getContext());
         return loaderMainMenu;
     }
@@ -105,10 +104,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         return mainMenuItemList;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
+
 
     public RecyclerView getRecyclerView() {
         return recyclerView;
@@ -266,14 +262,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void editItem(int positionMainItem) {
         temPositionMainItem = positionMainItem;
-        DialogFragment dialogFragment = new MainItemDialog();
+       MainItemDialog dialogFragment = new MainItemDialog();
         MainMenuItem mainMenuItem = mainMenuItemList.get(positionMainItem);
         Bundle bundle = new Bundle();
         bundle.putInt("operation", OperationAsync.UPDATE);
         bundle.putLong("id", mainMenuItem.getId());
         bundle.putString("name", mainMenuItem.getName());
         dialogFragment.setArguments(bundle);
-        dialogFragment.show(getActivity().getFragmentManager(), MainItemDialog.TAG);
+        android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        dialogFragment.show(fragmentManager,MainItemDialog.TAG);
 
 
     }
