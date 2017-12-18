@@ -73,11 +73,17 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+    }
+
+   /* @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         getLoaderManager().initLoader(0, null, this);
 
-    }
+    }*/
 
     @Override
     public void addNewItem(SubItem object) {
@@ -111,6 +117,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public void updateItem(SubItem object) {
+        System.out.println("updateItem id"+object.getId());
         SubItemOperationAsync addItemAsynck = new SubItemOperationAsync(getActivity(), OperationAsync.UPDATE);
         addItemAsynck.execute(object);
         long resultUpdate = 0;
@@ -226,7 +233,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         Bundle bundle = new Bundle();
         bundle.putInt(OperationAsync.OPERATION, OperationAsync.UPDATE);
         bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
-        bundle.putLong(Constants.ID_PARENT, subItem.getIdMainItem());
+        bundle.putLong(Constants.ID, subItem.getId());
         bundle.putString(Constants.NAME, subItem.getName());
         bundle.putFloat(Constants.COST, subItem.getCost());
         bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
@@ -248,6 +255,16 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     @Override
     public long getIdDb() {
         return idParent;
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
+    @Override
+    public void restartLoader() {
+        getLoaderManager().restartLoader(0,null,this);
     }
 
 

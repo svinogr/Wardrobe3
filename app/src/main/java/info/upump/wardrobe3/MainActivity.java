@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onBackStackChanged() {
                 Fragment visibleFragment = getSupportFragmentManager().findFragmentByTag(VISIBLE_FRAGMENT);
+                System.out.println("onBackStackChanged");
                 if (visibleFragment instanceof MainFragment) {
                     fragmentTag = MainFragment.TAG;
                 }
@@ -72,18 +73,27 @@ public class MainActivity extends AppCompatActivity
                     fragmentTag = SubFragment.TAG;
                 }
                 fragment = visibleFragment;
+                System.out.println("fragmentTag " + fragmentTag);
+                System.out.println("fragment " + fragment);
             }
         });
 
         if (savedInstanceState == null) {
 
             fragment = new MainFragment();
-            fragmentTag = MainFragment.TAG;
+            //  fragmentTag = MainFragment.TAG;
             setCurrentFragment(fragment);
         } else {
-            fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
-            fragment = getSupportFragmentManager().findFragmentByTag(fragmentTag);
-            viewFragmentController = (ViewFragmentController) fragment;
+            //    fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
+            int id = savedInstanceState.getInt(FRAGMENT_TAG);
+            // fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
+
+            fragment = getSupportFragmentManager().findFragmentById(id);
+            fragmentTag = ((ViewFragmentController) fragment).getFragmentTag();
+            ((ViewFragmentController)fragment).restartLoader();
+            System.out.println("bundle state " + fragmentTag);
+            System.out.println("bundle state frag " + fragment);
+            //  viewFragmentController = (ViewFragmentController) fragment;
 
         }
 
@@ -151,6 +161,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         Bundle bundle;
         DialogFragment dialogFragment;
+
         switch (fragmentTag) {
             case MainFragment.TAG:
 
@@ -188,16 +199,21 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setCurrentFragment(Fragment fragment) {
-        this.fragment = fragment;
+        // this.fragment = fragment;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.replace(R.id.mainContainer, fragment, VISIBLE_FRAGMENT);
-        if(fragment instanceof ViewFragmentController){
+     /*   if(fragment instanceof ViewFragmentController){
             viewFragmentController = (ViewFragmentController) fragment;
-        }
-        if (!(fragment instanceof MainFragment)) {
+        }*/
+        if (fragment instanceof MainFragment) {
+            fragmentTag = MainFragment.TAG;
+            this.fragment = fragment;
+            System.out.println("fragmentTag setCurrentFragment  " + fragmentTag);
+        } else {
             fragmentTransaction.addToBackStack(null);
         }
+
         fragmentTransaction.commit();
 
     }
@@ -214,7 +230,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public ViewFragmentController getViewFragmentController() {
-        return viewFragmentController;    }
+        return viewFragmentController;
+    }
 
 
    /* @Override
@@ -324,6 +341,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(FRAGMENT_TAG, fragmentTag);
+        // outState.putString(FRAGMENT_TAG, fragmentTag);
+        outState.putInt(FRAGMENT_TAG, fragment.getId());
     }
 }

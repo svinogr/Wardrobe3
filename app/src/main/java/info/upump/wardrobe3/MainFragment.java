@@ -1,5 +1,6 @@
 package info.upump.wardrobe3;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -71,8 +72,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(0, null, this);
-
-
     }
 
     @Override
@@ -272,8 +271,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         dialogFragment.show(fragmentManager,MainItemDialog.TAG);
 
-
     }
+
 
     @Override
     public void cancelUpdate() {
@@ -287,6 +286,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         return 0;
     }
 
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
+
+    @Override
+    public void restartLoader() {
+        getLoaderManager().restartLoader(0,null,this);
+    }
 
 
 }

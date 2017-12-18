@@ -33,6 +33,7 @@ public class SubItemDialog extends DialogFragment {
     private EditText cost;
     private EditText description;
     private long idParent;
+    private long id;
     private ImageView image;
 
 
@@ -100,6 +101,7 @@ public class SubItemDialog extends DialogFragment {
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
         description.setText(getArguments().getString(Constants.DESCRIPTION));
         image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
+        id = getArguments().getLong(Constants.ID);
 
         builder.setTitle(R.string.title_dialog_update_sub_item).
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -109,6 +111,7 @@ public class SubItemDialog extends DialogFragment {
                             return;
                         }
                         SubItem subItem = new SubItem();
+                        subItem.setId(id);
                         subItem.setIdMainItem(idParent);
                         subItem.setName(name.getText().toString());
                         try {
@@ -121,8 +124,10 @@ public class SubItemDialog extends DialogFragment {
                         subItem.setImg("");
 
                         if (viewFragmentController != null) {
+                            System.out.println(viewFragmentController);
                             viewFragmentController.updateItem(subItem);
                         }
+                        System.out.println(viewFragmentController);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -150,9 +155,10 @@ public class SubItemDialog extends DialogFragment {
                         SubItem subItem = new SubItem();
                         subItem.setIdMainItem(idParent);
                         subItem.setName(name.getText().toString());
+                        System.out.println(cost.getText().toString());
                         try {
-
                             subItem.setCost(Float.parseFloat(cost.getText().toString()));
+
                         } catch (NumberFormatException e) {
                             subItem.setCost(0);
                         }

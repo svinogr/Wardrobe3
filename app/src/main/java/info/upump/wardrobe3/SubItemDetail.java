@@ -95,6 +95,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
 
     }
 
+
     @Override
     public Intent createResultIntentOk() {
         Intent intent = new Intent();

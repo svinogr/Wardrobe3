@@ -25,6 +25,7 @@ public class LoaderMainMenu extends AsyncTaskLoader<List<MainMenuItem>> {
 
     @Override
     public List<MainMenuItem> loadInBackground() {
+        System.out.println("loadInBackground loader ");
         List<MainMenuItem> list = new ArrayList<>();
         Cursor cursor= mainTableDao.getAll();
         MainMenuItem mainMenuItem;

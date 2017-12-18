@@ -48,11 +48,12 @@ public class MainItemDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
       //  setRetainInstance(true);
-
+        viewFragmentController = getViewFragmentController();
+/*
         if (getActivity() instanceof FragmentController) {
             System.out.println(2);
             viewFragmentController = (ViewFragmentController) ((FragmentController)getActivity()).getCurrentFragment();
-        }
+        }*/
         System.out.println(viewFragmentController);
 
         setCancelable(false);// запрещаем закрытие диалога кликом в путсоту
@@ -106,9 +107,9 @@ public class MainItemDialog extends DialogFragment {
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
                         mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
-                    /*    if (viewFragmentController == null) {
+                        if (viewFragmentController == null) {
                             viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
-                        }*/
+                        }
                         System.out.println(viewFragmentController);
                         viewFragmentController.updateItem(mainMenuItem);
                     }
@@ -117,8 +118,9 @@ public class MainItemDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
+                        System.out.println(((FragmentController)getActivity()).getCurrentFragment());
                         if (viewFragmentController == null) {
-                            viewFragmentController = ((FragmentController) getActivity()).getViewFragmentController();
+                            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
                         }
                         System.out.println("отмена "+viewFragmentController);
                         viewFragmentController.cancelUpdate();
@@ -161,6 +163,10 @@ public class MainItemDialog extends DialogFragment {
 
         return builder;
 
+    }
+
+    ViewFragmentController getViewFragmentController(){
+        return (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
     }
 
 

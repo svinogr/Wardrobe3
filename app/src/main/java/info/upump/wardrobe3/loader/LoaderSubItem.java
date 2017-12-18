@@ -28,6 +28,7 @@ public class LoaderSubItem extends AsyncTaskLoader<List<SubItem>> {
 
     @Override
     public List<SubItem> loadInBackground() {
+        System.out.println("loadInBackground loader ");
         List<SubItem> list = new ArrayList<>();
         Cursor cursor= subItemDao.getByParentId(id);
         SubItem subItem;
