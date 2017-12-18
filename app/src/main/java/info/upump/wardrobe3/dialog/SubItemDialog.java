@@ -5,6 +5,7 @@ import android.app.Dialog;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.ViewFragmentController;
+import info.upump.wardrobe3.db.SubItemTableDao;
 import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
@@ -96,13 +98,29 @@ public class SubItemDialog extends DialogFragment {
     }
 
     private AlertDialog.Builder createUpdateDialog() {
+        SubItemTableDao subItemTableDao = new SubItemTableDao(getContext());
+        Cursor byId = subItemTableDao.getById(getArguments().getLong(Constants.ID));
+        if(byId.moveToFirst()){
+            do {
+
+                id = (byId.getInt(0));
+                name.setText(byId.getString(1));
+                image.setImageURI(Uri.parse((byId.getString(2))));
+                cost.setText(String.valueOf((byId.getFloat(3))));
+                // TODO дату вписать
+
+                description.setText((byId.getString(5)));
+
+            }while (byId.moveToNext());
+        }
+        subItemTableDao.close();
         System.out.println("createSaveSubDialog");
-        name.setText(getArguments().getString(Constants.NAME));
+      /*  name.setText(getArguments().getString(Constants.NAME));
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
         description.setText(getArguments().getString(Constants.DESCRIPTION));
         image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
         id = getArguments().getLong(Constants.ID);
-
+*/
         builder.setTitle(R.string.title_dialog_update_sub_item).
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
@@ -114,6 +132,7 @@ public class SubItemDialog extends DialogFragment {
                         subItem.setId(id);
                         subItem.setIdMainItem(idParent);
                         subItem.setName(name.getText().toString());
+                        System.out.println(cost.getText().toString());
                         try {
 
                             subItem.setCost(Float.parseFloat(cost.getText().toString()));
