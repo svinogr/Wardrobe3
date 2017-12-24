@@ -14,6 +14,7 @@ import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.MainActivity;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubFragment;
+import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.MainMenuViewHolder;
 
@@ -46,6 +47,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     public void onBindViewHolder(MainMenuViewHolder holder, int position) {
         final long id = mainMenuItemList.get(position).getId();
         final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
+        final String name = mainMenuItemList.get(position).getName();
 
         holder.name.setText(mainMenuItemList.get(position).getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -53,8 +55,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 System.out.println("v adaotere if "+id);
-                bundle.putLong("idParent",id);
-                bundle.putInt("resourceMask",resourceMask);
+                bundle.putLong(Constants.ID_PARENT,id);
+                bundle.putString(Constants.NAME,name);
+                bundle.putInt(Constants.MASK,resourceMask);
 
                 SubFragment fragment = new SubFragment();
                 fragment.setArguments(bundle);

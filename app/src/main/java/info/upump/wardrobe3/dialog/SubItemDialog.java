@@ -2,42 +2,49 @@ package info.upump.wardrobe3.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.ViewFragmentController;
 import info.upump.wardrobe3.db.SubItemTableDao;
-import info.upump.wardrobe3.model.EnumMask;
-import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static info.upump.wardrobe3.SubFragment.CAMERA_RESULT;
+import static info.upump.wardrobe3.SubFragment.CHOOSE_PHOTO_RESULT;
 
 /**
  * Created by explo on 18.12.2017.
  */
 
-public class SubItemDialog extends DialogFragment {
+public class SubItemDialog extends DialogFragment implements View.OnClickListener {
     private AlertDialog.Builder builder;
-    public static final String TAG = "dialogMain";
+    public static final String TAG = "dialogSubDetail";
     private ViewFragmentController viewFragmentController;
+    private AppCompatActivity activity;
     private EditText name;
     private EditText cost;
     private EditText description;
     private long idParent;
     private long id;
     private ImageView image;
-
+    private File fileFromDialog;
+    private Uri uriFromDialog;
 
 
     @Override
@@ -59,6 +66,8 @@ public class SubItemDialog extends DialogFragment {
         cost = inflate.findViewById(R.id.detail_cost);
         description = inflate.findViewById(R.id.detail_description);
         image = inflate.findViewById(R.id.detail_img);
+
+        image.setOnClickListener(this);
 
         builder.setView(inflate);
 
@@ -83,6 +92,7 @@ public class SubItemDialog extends DialogFragment {
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
         description.setText(getArguments().getString(Constants.DESCRIPTION));
         image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
+        image.setOnClickListener(null);
 
         builder.setTitle(R.string.title_dialog_sub_item_open_detail).
                 setNegativeButton(R.string.negative_btn_dialog_sub_item_open_detail, new DialogInterface.OnClickListener() {
@@ -100,7 +110,7 @@ public class SubItemDialog extends DialogFragment {
     private AlertDialog.Builder createUpdateDialog() {
         SubItemTableDao subItemTableDao = new SubItemTableDao(getContext());
         Cursor byId = subItemTableDao.getById(getArguments().getLong(Constants.ID));
-        if(byId.moveToFirst()){
+        if (byId.moveToFirst()) {
             do {
 
                 id = (byId.getInt(0));
@@ -111,9 +121,9 @@ public class SubItemDialog extends DialogFragment {
 
                 description.setText((byId.getString(5)));
 
-            }while (byId.moveToNext());
+            } while (byId.moveToNext());
         }
-       // subItemTableDao.close();
+        // subItemTableDao.close();
         System.out.println("createSaveSubDialog");
       /*  name.setText(getArguments().getString(Constants.NAME));
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
@@ -200,8 +210,73 @@ public class SubItemDialog extends DialogFragment {
         return builder;
     }
 
+
     @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
+    public void onClick(View v) {
+        System.out.println(v.getId());
+        switch (v.getId()) {
+            case R.id.detail_img:
+                System.out.println("картинка");
+                CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = new CameraOrChoosePhotoDialog();
+                //  FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+                cameraOrChoosePhotoDialog.show(getActivity().getSupportFragmentManager(), CameraOrChoosePhotoDialog.TAG);
+                break;
+        }
     }
+/*
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+       activity =  (AppCompatActivity)context;
+    }*/
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+       // super.onActivityResult(requestCode, resultCode, data);
+        CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getActivity().getSupportFragmentManager().findFragmentByTag(CameraOrChoosePhotoDialog.TAG);
+        System.out.println(resultCode);
+        System.out.println(cameraOrChoosePhotoDialog);
+        System.out.println("main activity result");
+        System.out.println("result activity "+TAG+" "+ requestCode+ ""+resultCode);
+        System.out.println(RESULT_OK+" "+RESULT_CANCELED);
+
+
+        switch (requestCode) {
+            case CAMERA_RESULT:
+                if (resultCode == RESULT_OK) {
+                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
+                    uriFromDialog = cameraOrChoosePhotoDialog.getUri();
+                    // TODO проверка на размер экрана
+                    image.setImageURI(uriFromDialog);
+                    addPicToGallery();
+                    System.out.println("ur " + uriFromDialog.toString());
+
+                }
+                if (resultCode == RESULT_CANCELED) {
+                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
+                    fileFromDialog.delete();
+
+                }
+                break;
+            case CHOOSE_PHOTO_RESULT:
+                if (resultCode == RESULT_OK) {
+                    System.out.println(data.getData());
+                    uriFromDialog = data.getData();
+                    image.setImageURI(uriFromDialog);
+
+                }
+                if (resultCode == RESULT_CANCELED)
+                    break;
+        }
+//        cameraOrChoosePhotoDialog.dismiss();
+
+    }
+
+    private void addPicToGallery() {
+
+    }
+
 }
+
+

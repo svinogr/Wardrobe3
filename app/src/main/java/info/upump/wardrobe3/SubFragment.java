@@ -37,6 +37,8 @@ import info.upump.wardrobe3.model.SubItem;
 
 public class SubFragment extends Fragment implements ViewFragmentController<SubItem>, LoaderManager.LoaderCallbacks<List<SubItem>> {
     public static final String TAG = "subFragment";
+    public static final int CAMERA_RESULT = 2;
+    public static final int CHOOSE_PHOTO_RESULT = 3;
     private RecyclerView recyclerView;
     private List<SubItem> subItemList = new ArrayList<>();
     private SubItemAdapter subItemAdapter;
@@ -45,14 +47,16 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     private int tempPositionSubItem;
     private LoaderSubItem loaderSubItem;
     private int resourceMask;
+    private String title;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        idParent = getArguments().getLong("idParent");
+     //   idParent = getArguments().getLong("idParent");
         System.out.println("из фрагме " + idParent);
+        setTitle();
         View root = inflater.inflate(R.layout.fragment_sub_item, container, false);
 
         /// subItemAdapter = new SubItemAdapter(subItemList, getActivity());
@@ -84,6 +88,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         getLoaderManager().initLoader(0, null, this);
 
     }
+
 
     @Override
     public void addNewItem(SubItem object) {
@@ -241,7 +246,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
         SubItemDialog dialogFragment = new SubItemDialog();
         dialogFragment.setArguments(bundle);
-        dialogFragment.show(getActivity().getSupportFragmentManager(), MainItemDialog.TAG);
+        dialogFragment.show(getActivity().getSupportFragmentManager(), SubItemDialog.TAG);
 
     }
 
@@ -267,12 +272,18 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         getLoaderManager().restartLoader(0,null,this);
     }
 
+    @Override
+    public void setTitle() {
+        getActivity().setTitle(title);
+    }
+
 
     @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
-        idParent = getArguments().getLong("idParent");// получаю номер родителя из преддыдшего фрагм из бандл
+        idParent = getArguments().getLong(Constants.ID_PARENT);// получаю номер родителя из преддыдшего фрагм из бандл
         // test enum
-        resourceMask = getArguments().getInt("resourceMask");
+        resourceMask = getArguments().getInt(Constants.MASK);
+        title = getArguments().getString(Constants.NAME);
         System.out.println("coplfybt kjflthf " + idParent);
         loaderSubItem = new LoaderSubItem(getContext(), idParent);
         return loaderSubItem;
@@ -328,4 +339,5 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     public long getIdParent() {
         return idParent;
     }
+
 }

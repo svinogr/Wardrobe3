@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import info.upump.wardrobe3.db.SubItemTableDao;
+import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.model.SubItem;
 
 /**
@@ -54,7 +55,8 @@ public class SubItemDetailFragment extends Fragment implements View.OnClickListe
     public void onAttach(Context context) {
         super.onAttach(context);
         dbDao = new SubItemTableDao(context);
-        Cursor cursor = dbDao.getById(getArguments().getLong("idSubItem"));
+       // Cursor cursor = dbDao.getById(getArguments().getLong("idSubItem"));
+        Cursor cursor = dbDao.getById(getArguments().getLong(Constants.ID));
         if(cursor.moveToFirst()){
             do {
                 subItem = new SubItem();
@@ -72,6 +74,12 @@ public class SubItemDetailFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        System.out.println(v.getId());
+        switch (v.getId()){
+            case R.id.detail_img:
+                System.out.println("картинка");
+                break;
+        }
 
     }
 }

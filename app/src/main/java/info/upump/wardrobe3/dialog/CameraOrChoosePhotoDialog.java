@@ -2,7 +2,6 @@ package info.upump.wardrobe3.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -22,13 +23,13 @@ import java.io.IOException;
 import java.util.List;
 
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.SubItemDetail;
-import info.upump.wardrobe3.model.SubItem;
+import info.upump.wardrobe3.SubFragment;
 
 import static android.support.v4.content.FileProvider.getUriForFile;
 
 
 public class CameraOrChoosePhotoDialog extends DialogFragment implements View.OnClickListener {
+    public final static String TAG = "CameraOrChoosePhotoDialog";
     private AlertDialog.Builder builder;
     private TextView camera, choosePhoto;
     private File file;
@@ -78,7 +79,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
             case R.id.dialog_choose_photo:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
-                getActivity().startActivityForResult(photoPickerIntent, SubItemDetail.CHOOSE_PHOTO_RESULT);
+             startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
                 break;
         }
     }
@@ -120,11 +121,12 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
             cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
                     | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
+
             List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
             for (ResolveInfo resolveInfo : resInfoList) {
                 String packageName = resolveInfo.activityInfo.packageName;
                 getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                getActivity().startActivityForResult(cameraIntent, SubItemDetail.CAMERA_RESULT);
+          getActivity().startActivityForResult(cameraIntent, SubFragment.CAMERA_RESULT);
             }
 
 
@@ -176,6 +178,13 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
             dismiss();
         }
         return file;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        System.out.println(resultCode);
+        System.out.println("result activity camera "+requestCode+ " "+resultCode);
     }
 }
 

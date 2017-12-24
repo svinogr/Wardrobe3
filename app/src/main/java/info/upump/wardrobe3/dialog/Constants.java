@@ -12,4 +12,6 @@ public interface Constants {
     public final static String DATE = "date";
     public final static String ID_PARENT = "idParent";
     public final static String DESCRIPTION = "description";
+    public final static String MASK = "resMask";
+
 }

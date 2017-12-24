@@ -45,11 +45,12 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
 
     @Override
     public Long delete(MainMenuItem item) {
-        SubItem subItem = new SubItem();
-        subItem.setIdMainItem(item.getId());
-        SubItemTableDao dao = new SubItemTableDao(context);
+        //TODO обдумать систему востоновления подменю после удаления родительского меню
+      //  SubItem subItem = new SubItem();
+      //  subItem.setIdMainItem(item.getId());
+       // SubItemTableDao dao = new SubItemTableDao(context);
 
-        dao.deleteAllByParentId(subItem);
+       // dao.deleteAllByParentId(subItem);
 
 
         return (long) database.delete(DataBaseHelper.TABLE_MAIN_MENU, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);

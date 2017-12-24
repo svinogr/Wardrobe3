@@ -22,4 +22,5 @@ public interface ViewFragmentController<T> {
 
 
     void restartLoader();
+    void setTitle();
 }

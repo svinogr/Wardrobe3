@@ -1,3 +1,4 @@
+/*
 package info.upump.wardrobe3;
 
 import android.content.Intent;
@@ -61,6 +62,7 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
             description.setText(intent.getStringExtra("description"));
         }
     }
+*/
 /*
 
     private Uri getUriFromDB(String image) {
@@ -71,7 +73,8 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         System.out.println(uri);
         return uri;
     }
-*/
+*//*
+
 
     @Override
     public void onClick(View v) {
@@ -113,9 +116,11 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
         }
         intent.putExtra("idParent", idParent);
         intent.putExtra("description", description.getText().toString());
-     /*   if (fileFromDialog != null) {
+     */
+/*   if (fileFromDialog != null) {
             intent.putExtra("image", Uri.fromFile(fileFromDialog));
-        }*/
+        }*//*
+
         if (uriFromDialog != null) {
             intent.putExtra("image", uriFromDialog.toString());
         }
@@ -162,7 +167,8 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
                 if(resultCode == RESULT_CANCELED)
                 break;
         }
-       /*
+       */
+/*
         if (resultCode == RESULT_OK) {
             if (requestCode == CAMERA_RESULT) {
                 fileFromDialog = cameraOrChoosePhotoDialog.getFile();
@@ -178,7 +184,8 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
                 image.setImageURI(uriFromDialog);
 
             }
-        }*/
+        }*//*
+
         cameraOrChoosePhotoDialog.dismiss();
     }
 
@@ -198,3 +205,4 @@ public class SubItemDetail extends AppCompatActivity implements View.OnClickList
     }
 
 }
+*/

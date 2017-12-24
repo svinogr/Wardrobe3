@@ -73,7 +73,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
                 SubItemDialog dialogFragment = new SubItemDialog();
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show( activity.getSupportFragmentManager(), MainItemDialog.TAG);
+                dialogFragment.show( activity.getSupportFragmentManager(), SubItemDialog.TAG);
             }
         });
     }

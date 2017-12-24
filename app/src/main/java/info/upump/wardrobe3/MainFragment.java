@@ -1,6 +1,7 @@
 package info.upump.wardrobe3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.OperationAsync;
+import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
 import info.upump.wardrobe3.model.MainMenuItem;
 
@@ -59,6 +61,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(createItemTouchHelperCallback());
         itemTouchHelper.attachToRecyclerView(recyclerView);
+        setTitle();
 
         return root;
     }
@@ -203,9 +206,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                         showSnackBar();
                         return;
                     }
-
                 }
-
 
                 System.out.println("удалили итем");
             }
@@ -296,5 +297,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         getLoaderManager().restartLoader(0,null,this);
     }
 
+    @Override
+    public void setTitle() {
+        getActivity().setTitle("Комод");
+
+    }
 
 }

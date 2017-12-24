@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.addToBackStack(null);
         }
 
+
         fragmentTransaction.commit();
 
     }
@@ -343,5 +344,34 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         // outState.putString(FRAGMENT_TAG, fragmentTag);
         outState.putInt(FRAGMENT_TAG, fragment.getId());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("main activity result");
+      /*  for(Fragment f: getSupportFragmentManager().getFragments()){
+            System.out.println(f);
+        }*/
+        SubItemDialog subItemDialog;
+      switch (requestCode){
+          case SubFragment.CAMERA_RESULT:
+              subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
+              System.out.println(subItemDialog);
+              if(subItemDialog != null){
+                  subItemDialog.onActivityResult( requestCode,  resultCode,  data);
+              }
+
+              break;
+          case SubFragment.CHOOSE_PHOTO_RESULT:
+              subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
+              System.out.println(subItemDialog);
+              if(subItemDialog != null){
+                  subItemDialog.onActivityResult( requestCode,  resultCode,  data);
+              }
+
+              break;
+      }
+
+
     }
 }
