@@ -4,9 +4,15 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -16,15 +22,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
+import info.upump.wardrobe3.SubFragment;
 import info.upump.wardrobe3.ViewFragmentController;
 import info.upump.wardrobe3.db.SubItemTableDao;
 import info.upump.wardrobe3.model.SubItem;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static android.support.v4.content.FileProvider.getUriForFile;
 import static info.upump.wardrobe3.SubFragment.CAMERA_RESULT;
 import static info.upump.wardrobe3.SubFragment.CHOOSE_PHOTO_RESULT;
 
@@ -33,13 +43,20 @@ import static info.upump.wardrobe3.SubFragment.CHOOSE_PHOTO_RESULT;
  */
 
 public class SubItemDialog extends DialogFragment implements View.OnClickListener {
-    private AlertDialog.Builder builder;
+    private static final int PERMISSION_CAMERA_CODE = 0;
     public static final String TAG = "dialogSubDetail";
+
+    private AlertDialog.Builder builder;
     private ViewFragmentController viewFragmentController;
     private AppCompatActivity activity;
     private EditText name;
     private EditText cost;
     private EditText description;
+    private FloatingActionButton takePhotoFab;
+    private FloatingActionButton choosePhotoFab;
+
+    private Uri uri;
+    private File file;
     private long idParent;
     private long id;
     private ImageView image;
@@ -82,8 +99,12 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         cost = inflate.findViewById(R.id.detail_cost);
         description = inflate.findViewById(R.id.detail_description);
         image = inflate.findViewById(R.id.detail_img);
+        takePhotoFab = inflate.findViewById(R.id.detail_btn_take_photo);
+        choosePhotoFab = inflate.findViewById(R.id.detail_btn_choose_photo);
 
         image.setOnClickListener(this);
+        takePhotoFab.setOnClickListener(this);
+        choosePhotoFab.setOnClickListener(this);
 
         builder.setView(inflate);
 
@@ -232,10 +253,11 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         System.out.println(v.getId());
         switch (v.getId()) {
             case R.id.detail_img:
-                System.out.println("картинка");
-                CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = new CameraOrChoosePhotoDialog();
-                //  FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-                cameraOrChoosePhotoDialog.show(getActivity().getSupportFragmentManager(), CameraOrChoosePhotoDialog.TAG);
+                break;
+            case R.id.detail_btn_take_photo:
+                checkVersion();
+                break;
+            case R.id.detail_btn_choose_photo:
                 break;
         }
     }
@@ -249,31 +271,26 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-       // super.onActivityResult(requestCode, resultCode, data);
-        CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getActivity().getSupportFragmentManager().findFragmentByTag(CameraOrChoosePhotoDialog.TAG);
+        // super.onActivityResult(requestCode, resultCode, data);
         System.out.println(resultCode);
-        System.out.println(cameraOrChoosePhotoDialog);
-        System.out.println("result activity "+TAG+" "+ requestCode+ ""+resultCode);
-        System.out.println(RESULT_OK+" "+RESULT_CANCELED);
+        System.out.println("result activity " + TAG + " " + requestCode + "" + resultCode);
+        System.out.println(RESULT_OK + " " + RESULT_CANCELED);
 
 
         switch (requestCode) {
             case CAMERA_RESULT:
                 if (resultCode == RESULT_OK) {
                     System.out.println("OK");
-                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
-                    uriFromDialog = cameraOrChoosePhotoDialog.getUri();
                     // TODO проверка на размер экрана
-                    image.setImageURI(uriFromDialog);
+                    image.setImageURI(uri);
                     addPicToGallery();
-                    System.out.println("ur " + uriFromDialog.toString());
-                  //  cameraOrChoosePhotoDialog.dismiss();
+                    System.out.println("ur " + uri.toString());
+                    //  cameraOrChoosePhotoDialog.dismiss();
 
                 }
                 if (resultCode == RESULT_CANCELED) {
                     System.out.println("Canseld");
-                    fileFromDialog = cameraOrChoosePhotoDialog.getFile();
-                    fileFromDialog.delete();
+                    file.delete();
 
                 }
                 break;
@@ -287,7 +304,6 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                 if (resultCode == RESULT_CANCELED)
                     break;
         }
-//        cameraOrChoosePhotoDialog.dismiss();
 
     }
 
@@ -295,14 +311,94 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    private void checkVersion() {
 
-        if(uriFromDialog!=null) {
-            outState.putString("uri", uriFromDialog.toString());
-            System.out.println("3"+uriFromDialog.toString());
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (getActivity().checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CAMERA}, PERMISSION_CAMERA_CODE);
+            } else takePhoto();
+
+        } else takePhoto();
+    }
+
+    private void takePhoto() {
+        Uri uri = generateUriPhoto();
+        if (uri != null) {
+
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            cameraIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+
+            List<ResolveInfo> resInfoList = getActivity().getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getActivity().startActivityForResult(cameraIntent, SubFragment.CAMERA_RESULT);
+            }
+
+
+        } else dismiss();
+    }
+
+    private Uri generateUriPhoto() {
+        file = createNameFile();
+        uri = null;
+        if (file != null) {
+            System.out.println("abs file " + file.getAbsolutePath());
+
+
+            String aut = getActivity().getPackageName() + ".fileprovider";
+            //   String aut = getActivity().getPackageName() ;
+            uri = getUriForFile(getActivity(), aut, file);
+            System.out.println("v dialogr uri " + uri);
+
 
         }
+        return uri;
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//проверяем ответ юзера
+        switch (requestCode) {
+            case PERMISSION_CAMERA_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    System.out.println("granted");
+                    takePhoto();
+
+                } else {
+                    System.out.println("denied");
+                    dismiss();
+                }
+        }
+
+
+    }
+
+    private File createNameFile() {
+        File directory = new File(getActivity().getFilesDir(), "images");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String name = "photo_" + System.currentTimeMillis();
+        System.out.println("имя " + name);
+
+        File file = null;
+        try {
+            file = File.createTempFile(
+                    name,  /* prefix */
+                    ".jpg",         /* suffix */
+                    directory      /* directory */
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+            dismiss();
+        }
+        return file;
     }
 }
 
