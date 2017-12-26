@@ -46,6 +46,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         System.out.println("CameraOrChoosePhotoDialog");
+        setRetainInstance(true);
         builder = new AlertDialog.Builder(getActivity());
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
@@ -74,12 +75,12 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.dialog_camera:
-                    checkVersion();
+                checkVersion();
                 break;
             case R.id.dialog_choose_photo:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
-             startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
+                startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
                 break;
         }
     }
@@ -91,7 +92,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
                 requestPermissions(new String[]{android.Manifest.permission.CAMERA}, PERMISION_CAMERA_CODE);
             } else takePhoto();
 
-        }else takePhoto();
+        } else takePhoto();
     }
 
     @Override
@@ -126,11 +127,11 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
             for (ResolveInfo resolveInfo : resInfoList) {
                 String packageName = resolveInfo.activityInfo.packageName;
                 getActivity().grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-          getActivity().startActivityForResult(cameraIntent, SubFragment.CAMERA_RESULT);
+                getActivity().startActivityForResult(cameraIntent, SubFragment.CAMERA_RESULT);
             }
 
 
-        }else dismiss();
+        } else dismiss();
     }
 
     private Uri generateUriPhoto() {
@@ -184,7 +185,7 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         System.out.println(resultCode);
-        System.out.println("result activity camera "+requestCode+ " "+resultCode);
+        System.out.println("result activity camera " + requestCode + " " + resultCode);
     }
 }
 

@@ -46,12 +46,28 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     private File fileFromDialog;
     private Uri uriFromDialog;
 
+/*
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if(savedInstanceState!=null){
+            uriFromDialog = Uri.parse(savedInstanceState.getString("uri"));
+            System.out.println(savedInstanceState.getString("uri"));
+            image.setImageURI(uriFromDialog);
+            System.out.println("2"+uriFromDialog.toString());
+        }
+    }
+*/
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if (getActivity() instanceof FragmentController) {
             viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
         }
+
+
         System.out.println(viewFragmentController);
         setCancelable(false);
         int operation = getArguments().getInt(OperationAsync.OPERATION);
@@ -237,7 +253,6 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         CameraOrChoosePhotoDialog cameraOrChoosePhotoDialog = (CameraOrChoosePhotoDialog) getActivity().getSupportFragmentManager().findFragmentByTag(CameraOrChoosePhotoDialog.TAG);
         System.out.println(resultCode);
         System.out.println(cameraOrChoosePhotoDialog);
-        System.out.println("main activity result");
         System.out.println("result activity "+TAG+" "+ requestCode+ ""+resultCode);
         System.out.println(RESULT_OK+" "+RESULT_CANCELED);
 
@@ -245,15 +260,18 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         switch (requestCode) {
             case CAMERA_RESULT:
                 if (resultCode == RESULT_OK) {
+                    System.out.println("OK");
                     fileFromDialog = cameraOrChoosePhotoDialog.getFile();
                     uriFromDialog = cameraOrChoosePhotoDialog.getUri();
                     // TODO проверка на размер экрана
                     image.setImageURI(uriFromDialog);
                     addPicToGallery();
                     System.out.println("ur " + uriFromDialog.toString());
+                  //  cameraOrChoosePhotoDialog.dismiss();
 
                 }
                 if (resultCode == RESULT_CANCELED) {
+                    System.out.println("Canseld");
                     fileFromDialog = cameraOrChoosePhotoDialog.getFile();
                     fileFromDialog.delete();
 
@@ -277,6 +295,15 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        if(uriFromDialog!=null) {
+            outState.putString("uri", uriFromDialog.toString());
+            System.out.println("3"+uriFromDialog.toString());
+
+        }
+    }
 }
 
 
