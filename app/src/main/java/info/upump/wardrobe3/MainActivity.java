@@ -364,7 +364,7 @@ public class MainActivity extends AppCompatActivity
               break;
           case SubFragment.CHOOSE_PHOTO_RESULT:
               subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
-              System.out.println(subItemDialog);
+              System.out.println("CHOOSE_PHOTO_RESULT main ac"+subItemDialog);
               if(subItemDialog != null){
                   subItemDialog.onActivityResult( requestCode,  resultCode,  data);
               }

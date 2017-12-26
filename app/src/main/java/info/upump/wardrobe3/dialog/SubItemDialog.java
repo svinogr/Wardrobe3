@@ -60,26 +60,23 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     private long idParent;
     private long id;
     private ImageView image;
-    private File fileFromDialog;
-    private Uri uriFromDialog;
 
-/*
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(savedInstanceState!=null){
-            uriFromDialog = Uri.parse(savedInstanceState.getString("uri"));
+        System.out.println(111111);
+        if (savedInstanceState != null) {
+            uri = Uri.parse(savedInstanceState.getString("uri"));
             System.out.println(savedInstanceState.getString("uri"));
-            image.setImageURI(uriFromDialog);
-            System.out.println("2"+uriFromDialog.toString());
+            //   image.setImageURI(uri);
+            System.out.println("2" + uri.toString());
         }
     }
-*/
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        System.out.println(22222);
         if (getActivity() instanceof FragmentController) {
             viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
         }
@@ -145,55 +142,58 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     }
 
     private AlertDialog.Builder createUpdateDialog() {
+        System.out.println(333333);
         SubItemTableDao subItemTableDao = new SubItemTableDao(getContext());
         Cursor byId = subItemTableDao.getById(getArguments().getLong(Constants.ID));
+        SubItem subItemFromBD = new SubItem();
         if (byId.moveToFirst()) {
             do {
-
-                id = (byId.getInt(0));
-                name.setText(byId.getString(1));
-                image.setImageURI(Uri.parse((byId.getString(2))));
-                cost.setText(String.valueOf((byId.getFloat(3))));
+                subItemFromBD.setId(byId.getInt(0));
+                subItemFromBD.setName(byId.getString(1));
+                if (uri == null) {
+                    subItemFromBD.setImg((byId.getString(2)));
+                } else subItemFromBD.setImg(uri.toString());
+                subItemFromBD.setCost(byId.getFloat(3));
+                subItemFromBD.setDescription(byId.getString(5));
                 // TODO дату вписать
-
-                description.setText((byId.getString(5)));
-
-            } while (byId.moveToNext());
+            }
+            while (byId.moveToNext());
         }
-        // subItemTableDao.close();
         System.out.println("createSaveSubDialog");
-      /*  name.setText(getArguments().getString(Constants.NAME));
-        cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
-        description.setText(getArguments().getString(Constants.DESCRIPTION));
-        image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
-        id = getArguments().getLong(Constants.ID);
-*/
-        builder.setTitle(R.string.title_dialog_update_sub_item).
+        name.setText(subItemFromBD.getName());
+        cost.setText(String.valueOf(subItemFromBD.getCost()));
+        description.setText(subItemFromBD.getDescription());
+        image.setImageURI(Uri.parse(subItemFromBD.getImg()));
+        id = subItemFromBD.getId();
+
+        builder.setTitle(getResources().getString(R.string.title_dialog_update_sub_item)+" "+subItemFromBD.getName()).
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (name.getText().toString().equals("")) {
                             return;
                         }
-                        SubItem subItem = new SubItem();
-                        subItem.setId(id);
-                        subItem.setIdMainItem(idParent);
-                        subItem.setName(name.getText().toString());
-                        System.out.println(cost.getText().toString());
-                        try {
 
-                            subItem.setCost(Float.parseFloat(cost.getText().toString()));
+                        SubItem subItemToDB = new SubItem();
+                        subItemToDB.setId(id);
+                        subItemToDB.setIdMainItem(idParent);
+                        subItemToDB.setName(name.getText().toString());
+                        System.out.println(cost.getText().toString());
+
+                        try {
+                            subItemToDB.setCost(Float.parseFloat(cost.getText().toString()));
                         } catch (NumberFormatException e) {
-                            subItem.setCost(0);
+                            subItemToDB.setCost(0);
                         }
-                        subItem.setDescription(description.getText().toString());
-                        subItem.setImg("");
+
+                        subItemToDB.setDescription(description.getText().toString());
+                        subItemToDB.setImg(uri.toString());
 
                         if (viewFragmentController != null) {
                             System.out.println(viewFragmentController);
-                            viewFragmentController.updateItem(subItem);
+                            viewFragmentController.updateItem(subItemToDB);
                         }
-                        System.out.println(viewFragmentController);
+                        System.out.println("viewFragmentController: "+viewFragmentController);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -218,21 +218,21 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                         if (name.getText().toString().equals("")) {
                             return;
                         }
-                        SubItem subItem = new SubItem();
-                        subItem.setIdMainItem(idParent);
-                        subItem.setName(name.getText().toString());
+                        SubItem subItemToDB = new SubItem();
+                        subItemToDB.setIdMainItem(idParent);
+                        subItemToDB.setName(name.getText().toString());
                         System.out.println(cost.getText().toString());
                         try {
-                            subItem.setCost(Float.parseFloat(cost.getText().toString()));
+                            subItemToDB.setCost(Float.parseFloat(cost.getText().toString()));
 
                         } catch (NumberFormatException e) {
-                            subItem.setCost(0);
+                            subItemToDB.setCost(0);
                         }
-                        subItem.setDescription(description.getText().toString());
-                        subItem.setImg("");
+                        subItemToDB.setDescription(description.getText().toString());
+                        subItemToDB.setImg(uri.toString());
 
                         if (viewFragmentController != null) {
-                            viewFragmentController.addNewItem(subItem);
+                            viewFragmentController.addNewItem(subItemToDB);
                         }
                     }
                 })
@@ -258,6 +258,9 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                 checkVersion();
                 break;
             case R.id.detail_btn_choose_photo:
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                getActivity().startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
                 break;
         }
     }
@@ -297,8 +300,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
             case CHOOSE_PHOTO_RESULT:
                 if (resultCode == RESULT_OK) {
                     System.out.println(data.getData());
-                    uriFromDialog = data.getData();
-                    image.setImageURI(uriFromDialog);
+                    uri = data.getData();
+                    image.setImageURI(uri);
 
                 }
                 if (resultCode == RESULT_CANCELED)
@@ -399,6 +402,13 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
             dismiss();
         }
         return file;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (uri != null) {
+            outState.putString("uri", uri.toString());
+        }
     }
 }
 

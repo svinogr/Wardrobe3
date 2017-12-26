@@ -140,15 +140,14 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
                 for (SubItem m : subItemList) {
                     if (m.getId() == object.getId()) {
                         m.setName(object.getName());
+                        m.setImg(object.getImg());
                         index = subItemList.indexOf(m);
                         subItemAdapter.notifyItemChanged(index);
                         break;
                     }
-
                 }
             }
         }
-
 
     }
 
