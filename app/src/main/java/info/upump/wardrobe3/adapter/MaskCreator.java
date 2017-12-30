@@ -10,6 +10,5 @@ import info.upump.wardrobe3.model.SubItem;
 
 interface MaskCreator {
 
-
     Bitmap createMask(SubItem subItem);
 }

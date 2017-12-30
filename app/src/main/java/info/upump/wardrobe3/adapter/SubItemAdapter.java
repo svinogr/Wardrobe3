@@ -1,7 +1,12 @@
 package info.upump.wardrobe3.adapter;
 
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,8 +15,10 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import info.upump.wardrobe3.R;
+import info.upump.wardrobe3.SubFragment;
 import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.OperationAsync;
@@ -100,11 +108,37 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
             Bitmap bitmap;
             if (subItem.getImg() != null) {
                 //получаем картинку из URI и приводим ее к нужному размеру для кардвью
+
+
                 try {
                     Uri uriImg = Uri.parse(subItem.getImg());
+                    System.out.println(uriImg);
+                  /*  if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                        Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        List<ResolveInfo> resInfoList = activity.getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
+                        for (ResolveInfo resolveInfo : resInfoList) {
+                            String packageName = resolveInfo.activityInfo.packageName;
+                            System.out.println(resolveInfo);
+                            System.out.println(resolveInfo.activityInfo);
+                            activity.grantUriPermission(packageName, uriImg, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                        }
+                    }*/
+                    System.out.println("razr "+activity.getApplicationContext().checkCallingPermission(Manifest.permission.READ_EXTERNAL_STORAGE));
+
+                    try {
+                     //   String bitmap1 = MediaStore.Images.Media.insertImage(activity.getContentResolver(), uriImg.getPath(),"n","desd");
+                     //   System.out.println("tumbmail "+bitmap1);
+                        bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uriImg);
 
 
-                    bitmap = Bitmap.createScaledBitmap(MediaStore.Images.Media.getBitmap(activity.getContentResolver(),uriImg), MASK_HEIGHT, MASK_WIDTH, true);
+                    //    bitmap = MediaStore.Images.Media.getContentUri(uriImg.toString());
+                    }catch ( java.lang.SecurityException e){
+                        System.out.println("ебаные фоточки гугла");
+                        bitmap = DEAFAULT_PHOTO;
+                        bitmap.eraseColor(Color.BLUE);
+                    }
+                 //   bitmap = Bitmap.createScaledBitmap(bitmap1, MASK_HEIGHT, MASK_WIDTH, true);
                 }catch (FileNotFoundException e){
                     bitmap = DEAFAULT_PHOTO;
                     bitmap.eraseColor(Color.BLUE);
@@ -121,4 +155,5 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
         }
         return result;
     }
+
 }

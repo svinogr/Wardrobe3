@@ -53,7 +53,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
         mainAdapter = new MainAdapter(mainMenuItemList, getActivity());
-      //  mainAdapter = new MainAdapter(mainMenuItemList, getContext());
+        //  mainAdapter = new MainAdapter(mainMenuItemList, getContext());
 
         recyclerView = root.findViewById(R.id.recycledFragmentMain);
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
@@ -105,7 +105,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public List<MainMenuItem> getMainMenuItemList() {
         return mainMenuItemList;
     }
-
 
 
     public RecyclerView getRecyclerView() {
@@ -219,11 +218,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void showSnackBar() {
         System.out.println("snack");
-        Snackbar.make(getView(),getString(R.string.action_to_delite_item_snack_bar), Snackbar.LENGTH_LONG )
+        Snackbar.make(getView(), getString(R.string.action_to_delite_item_snack_bar), Snackbar.LENGTH_LONG)
                 .setAction(R.string.action_snak_bar_undo, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                      snackBarUndo();
+                        snackBarUndo();
 
                     }
                 }).show();
@@ -232,8 +231,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void snackBarUndo() {
-        if(tempMainItem != null){
-            MainItemOperationAsync mainItemOperationAsync = new MainItemOperationAsync(getContext(),OperationAsync.INSERT);
+        if (tempMainItem != null) {
+            MainItemOperationAsync mainItemOperationAsync = new MainItemOperationAsync(getContext(), OperationAsync.INSERT);
             mainItemOperationAsync.execute(tempMainItem);
             long resultInsert;
             try {
@@ -247,11 +246,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 e.printStackTrace();
                 resultInsert = 0;
             }
-            if(resultInsert>-1){
+            if (resultInsert > -1) {
                 System.out.println(resultInsert);
-                mainMenuItemList.add(temPositionMainItem,tempMainItem);
+                mainMenuItemList.add(temPositionMainItem, tempMainItem);
                 mainAdapter.notifyItemInserted(temPositionMainItem);
-               // mainAdapter.notifyItemChanged(temPositionMainItem);
+                // mainAdapter.notifyItemChanged(temPositionMainItem);
                 tempMainItem = null;
                 temPositionMainItem = 0;
             }
@@ -262,7 +261,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void editItem(int positionMainItem) {
         temPositionMainItem = positionMainItem;
-       MainItemDialog dialogFragment = new MainItemDialog();
+        MainItemDialog dialogFragment = new MainItemDialog();
         MainMenuItem mainMenuItem = mainMenuItemList.get(positionMainItem);
         Bundle bundle = new Bundle();
         bundle.putInt("operation", OperationAsync.UPDATE);
@@ -270,7 +269,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         bundle.putString("name", mainMenuItem.getName());
         dialogFragment.setArguments(bundle);
         android.support.v4.app.FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        dialogFragment.show(fragmentManager,MainItemDialog.TAG);
+        dialogFragment.show(fragmentManager, MainItemDialog.TAG);
 
     }
 
@@ -278,7 +277,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void cancelUpdate() {
         mainAdapter.notifyItemChanged(temPositionMainItem);
-        temPositionMainItem  = 0;
+        temPositionMainItem = 0;
 
     }
 
@@ -294,7 +293,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void restartLoader() {
-        getLoaderManager().restartLoader(0,null,this);
+        getLoaderManager().restartLoader(0, null, this);
     }
 
     @Override

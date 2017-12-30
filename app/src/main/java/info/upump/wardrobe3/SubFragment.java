@@ -49,6 +49,10 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     private int resourceMask;
     private String title;
 
+    public SubItemAdapter getSubItemAdapter() {
+        return subItemAdapter;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

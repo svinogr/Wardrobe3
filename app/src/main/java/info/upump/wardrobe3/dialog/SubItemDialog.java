@@ -127,6 +127,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         description.setText(getArguments().getString(Constants.DESCRIPTION));
         image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
         image.setOnClickListener(null);
+        choosePhotoFab.setVisibility(View.INVISIBLE);
+        takePhotoFab.setVisibility(View.INVISIBLE);
 
         builder.setTitle(R.string.title_dialog_sub_item_open_detail).
                 setNegativeButton(R.string.negative_btn_dialog_sub_item_open_detail, new DialogInterface.OnClickListener() {
@@ -163,10 +165,13 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         name.setText(subItemFromBD.getName());
         cost.setText(String.valueOf(subItemFromBD.getCost()));
         description.setText(subItemFromBD.getDescription());
-        image.setImageURI(Uri.parse(subItemFromBD.getImg()));
+        if (subItemFromBD.getImg() != null) {
+            image.setImageURI(Uri.parse(subItemFromBD.getImg()));
+        }
+
         id = subItemFromBD.getId();
 
-        builder.setTitle(getResources().getString(R.string.title_dialog_update_sub_item)+" "+subItemFromBD.getName()).
+        builder.setTitle(getResources().getString(R.string.title_dialog_update_sub_item) + " " + subItemFromBD.getName()).
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -193,7 +198,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                             System.out.println(viewFragmentController);
                             viewFragmentController.updateItem(subItemToDB);
                         }
-                        System.out.println("viewFragmentController: "+viewFragmentController);
+                        System.out.println("viewFragmentController: " + viewFragmentController);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -211,6 +216,9 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     }
 
     private AlertDialog.Builder createSaveDialog() {
+        if (uri != null) {
+            image.setImageURI(uri);
+        }
         builder.setTitle(R.string.title_dialog_create_sub_item).
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
@@ -229,8 +237,9 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                             subItemToDB.setCost(0);
                         }
                         subItemToDB.setDescription(description.getText().toString());
-                        subItemToDB.setImg(uri.toString());
-
+                        if (uri != null) {
+                            subItemToDB.setImg(uri.toString());
+                        }
                         if (viewFragmentController != null) {
                             viewFragmentController.addNewItem(subItemToDB);
                         }
@@ -406,6 +415,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        System.out.println("dialog onSaveInstanceState");
         if (uri != null) {
             outState.putString("uri", uri.toString());
         }

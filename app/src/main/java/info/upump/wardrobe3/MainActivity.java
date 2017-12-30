@@ -1,14 +1,18 @@
 package info.upump.wardrobe3;
 
+import android.Manifest;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,18 +22,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.io.File;
-import java.net.URI;
-import java.util.List;
+import android.widget.Toast;
 
 import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.dialog.MainItemDialog;
-import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.dialog.SubItemDialog;
-import info.upump.wardrobe3.dialog.SubItemOperationAsync;
-import info.upump.wardrobe3.model.SubItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, FragmentController {
@@ -37,14 +35,17 @@ public class MainActivity extends AppCompatActivity
     public static final int DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
     private final static String FRAGMENT_TAG = "fragmentTag";
     private final static String VISIBLE_FRAGMENT = "visibleFragment";
+    private static final int PERMISSION_PIC_CODE = 1;
     private FragmentTransaction fragmentTransaction;
     public ViewFragmentController viewFragmentController;
     private Fragment fragment;
     private String fragmentTag;
+    private Bundle savedInstanceState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -78,6 +79,61 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        getPermissionForPicImage();
+
+
+        //    initFirstFragment(savedInstanceState);
+
+    }
+
+    private void getPermissionForPicImage() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            System.out.println("запрос пермишн");
+
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ){
+                System.out.println("контенкст пермиш "+ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE));
+                if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+                    Toast.makeText(MainActivity.this, "Дя продолжения необходим доступ к фото", Toast.LENGTH_SHORT)
+                            .show();
+                    //initFirstFragment(savedInstanceState);
+
+                    this.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_PIC_CODE);
+
+                }else {
+                    //TODO если стоит донт аск
+                    initFirstFragment(savedInstanceState);
+                }
+            }else initFirstFragment(savedInstanceState);
+
+
+        } else initFirstFragment(savedInstanceState);
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_PIC_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    initFirstFragment(savedInstanceState);
+                } else {
+                    // Permission Denied
+                  /*  Toast.makeText(MainActivity.this, "Дя продолжения необходим доступ к фото", Toast.LENGTH_SHORT)
+                            .show();*/
+                    getPermissionForPicImage();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void initFirstFragment(Bundle savedInstanceState) {
+        System.out.println("razr1 " + (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED));
+
+        System.out.println("razr2 " + (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED));
         if (savedInstanceState == null) {
 
             fragment = new MainFragment();
@@ -90,14 +146,12 @@ public class MainActivity extends AppCompatActivity
 
             fragment = getSupportFragmentManager().findFragmentById(id);
             fragmentTag = ((ViewFragmentController) fragment).getFragmentTag();
-            ((ViewFragmentController)fragment).restartLoader();
+            ((ViewFragmentController) fragment).restartLoader();
             System.out.println("bundle state " + fragmentTag);
             System.out.println("bundle state frag " + fragment);
             //  viewFragmentController = (ViewFragmentController) fragment;
 
         }
-
-
     }
 
     @Override
@@ -131,6 +185,7 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -215,7 +270,8 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-        fragmentTransaction.commit();
+        //fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();// чтобы не ьыло ошибки при сохранении savedInstance
 
     }
 
@@ -235,115 +291,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null) {
-            return;
-        }
-
-        switch (requestCode) {
-            case DETAIL_SUB_ACTIVITY_ITEM_RESULT:
-                if (resultCode == RESULT_OK) {
-                    SubItem subItem = new SubItem();
-                    subItem.setName(data.getStringExtra("name"));
-                    subItem.setCost(data.getFloatExtra("cost", 0));
-                    subItem.setDescription(data.getStringExtra("description"));
-                    try {
-                        subItem.setImg(data.getStringExtra("image"));
-                    } catch (NullPointerException e) {
-
-                    }
-                    subItem.setIdMainItem(data.getLongExtra("idParent", 0));
-                    ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                    viewFragmentController.addNewItem(subItem);
-                }
-                if (resultCode == RESULT_CANCELED) {
-                    final Uri uri = Uri.parse(data.getStringExtra("image"));
-                    //TODO не понятно нужно ли делать отдельный поток
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            getContentResolver().delete(uri, null, null);
-
-                        }
-                    });
-                    thread.start();
-                }
-                break;
-            case DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT:
-                if (resultCode == RESULT_OK) {
-                    System.out.println("edit");
-                    SubItem subItem = new SubItem();
-                    subItem.setId(data.getLongExtra("id", 0));
-                    subItem.setName(data.getStringExtra("name"));
-                    subItem.setCost(data.getFloatExtra("cost", 0));
-                    subItem.setDescription(data.getStringExtra("description"));
-
-                    try {
-                        subItem.setImg(data.getStringExtra("image"));
-                    } catch (NullPointerException e) {
-
-                    }
-
-                    subItem.setIdMainItem(getIdItemCurrentFragment());
-                    ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                    viewFragmentController.updateItem(subItem);
-                }
-                if (resultCode == RESULT_CANCELED) {
-
-
-                }
-                break;
-        }*/
-
-/*
-        if (resultCode == RESULT_OK) {
-            if (requestCode == DETAIL_SUB_ACTIVITY_ITEM_RESULT) {
-                SubItem subItem = new SubItem();
-                subItem.setName(data.getStringExtra("name"));
-                subItem.setCost(data.getFloatExtra("cost", 0));
-                subItem.setDescription(data.getStringExtra("description"));
-                //       System.out.println(data.getStringExtra("img"));
-                try {
-                    subItem.setImg(data.getStringExtra("image"));
-                } catch (NullPointerException e) {
-
-                }
-                // subItem.setIdMainItem(getIdItemCurrentFragment());
-                subItem.setIdMainItem(data.getLongExtra("idParent", 0));
-                //    System.out.println("ryjgrf "+data.getLongExtra("idParent", 0));
-                //      System.out.println("new");
-                ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                viewFragmentController.addNewItem(subItem);
-
-            }
-            if (requestCode == DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT) {
-                System.out.println("edit");
-                SubItem subItem = new SubItem();
-                subItem.setId(data.getLongExtra("id", 0));
-                subItem.setName(data.getStringExtra("name"));
-                subItem.setCost(data.getFloatExtra("cost", 0));
-                subItem.setDescription(data.getStringExtra("description"));
-
-                try {
-                    subItem.setImg(data.getStringExtra("image"));
-                } catch (NullPointerException e) {
-
-                }
-
-                subItem.setIdMainItem(getIdItemCurrentFragment());
-                ViewFragmentController viewFragmentController = (ViewFragmentController) getCurrentFragment();
-                viewFragmentController.updateItem(subItem);
-            }
-
-        }*/
-    //   }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+        //     super.onSaveInstanceState(outState);
+        System.out.println("onSaveInstanceState");
         // outState.putString(FRAGMENT_TAG, fragmentTag);
-        outState.putInt(FRAGMENT_TAG, fragment.getId());
+        if (fragment != null) {
+            outState.putInt(FRAGMENT_TAG, fragment.getId());
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -353,24 +309,24 @@ public class MainActivity extends AppCompatActivity
             System.out.println(f);
         }*/
         SubItemDialog subItemDialog;
-      switch (requestCode){
-          case SubFragment.CAMERA_RESULT:
-              subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
-              System.out.println(subItemDialog);
-              if(subItemDialog != null){
-                  subItemDialog.onActivityResult( requestCode,  resultCode,  data);
-              }
+        switch (requestCode) {
+            case SubFragment.CAMERA_RESULT:
+                subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
+                System.out.println(subItemDialog);
+                if (subItemDialog != null) {
+                    subItemDialog.onActivityResult(requestCode, resultCode, data);
+                }
 
-              break;
-          case SubFragment.CHOOSE_PHOTO_RESULT:
-              subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
-              System.out.println("CHOOSE_PHOTO_RESULT main ac"+subItemDialog);
-              if(subItemDialog != null){
-                  subItemDialog.onActivityResult( requestCode,  resultCode,  data);
-              }
+                break;
+            case SubFragment.CHOOSE_PHOTO_RESULT:
+                subItemDialog = (SubItemDialog) getSupportFragmentManager().findFragmentByTag(SubItemDialog.TAG);
+                System.out.println("CHOOSE_PHOTO_RESULT main ac" + subItemDialog);
+                if (subItemDialog != null) {
+                    subItemDialog.onActivityResult(requestCode, resultCode, data);
+                }
 
-              break;
-      }
+                break;
+        }
 
 
     }
