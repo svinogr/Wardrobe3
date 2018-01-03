@@ -40,18 +40,18 @@ import info.upump.wardrobe3.model.SubItem;
 import info.upump.wardrobe3.model.SubItemViewHolder;
 
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> implements MaskCreator {
-    private List<SubItem> subItemList;
-    private AppCompatActivity activity;
-    private static final Bitmap DEAFAULT_PHOTO = Bitmap.createBitmap(300, 300,
+    protected List<SubItem> subItemList;
+    protected AppCompatActivity activity;
+    protected static final Bitmap DEAFAULT_PHOTO = Bitmap.createBitmap(300, 300,
             Bitmap.Config.ARGB_8888);
-    private int enumMaskOrdinal = 0;
-    private static final int MASK_WIDTH = 300;
-    private static final int MASK_HEIGHT = 300;
+    protected int enumMaskOrdinal = 0;
+    protected static final int MASK_WIDTH = 300;
+    protected static final int MASK_HEIGHT = 300;
 
     public SubItemAdapter(List<SubItem> subItemList, Activity activity, int enumMask) {
         this.subItemList = subItemList;
         this.activity = (AppCompatActivity) activity;
-        System.out.println("enumMask "+enumMask);
+        System.out.println("enumMask " + enumMask);
         this.enumMaskOrdinal = enumMask;
     }
 
@@ -81,7 +81,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
                 SubItemDialog dialogFragment = new SubItemDialog();
                 dialogFragment.setArguments(bundle);
-                dialogFragment.show( activity.getSupportFragmentManager(), SubItemDialog.TAG);
+                dialogFragment.show(activity.getSupportFragmentManager(), SubItemDialog.TAG);
             }
         });
     }
@@ -93,7 +93,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
 
     @Override
     public Bitmap createMask(SubItem subItem) {
-        System.out.println("masl"+ enumMaskOrdinal);
+        System.out.println("masl" + enumMaskOrdinal);
         EnumMask enumMask = EnumMask.values()[enumMaskOrdinal];
         int resourceMask = enumMask.getResource();
         System.out.println(resourceMask);
@@ -109,37 +109,37 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
             if (subItem.getImg() != null) {
                 //получаем картинку из URI и приводим ее к нужному размеру для кардвью
 
-
                 try {
                     Uri uriImg = Uri.parse(subItem.getImg());
                     System.out.println(uriImg);
-                  /*  if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                        Intent cameraIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                        List<ResolveInfo> resInfoList = activity.getPackageManager().queryIntentActivities(cameraIntent, PackageManager.MATCH_DEFAULT_ONLY);
-                        for (ResolveInfo resolveInfo : resInfoList) {
-                            String packageName = resolveInfo.activityInfo.packageName;
-                            System.out.println(resolveInfo);
-                            System.out.println(resolveInfo.activityInfo);
-                            activity.grantUriPermission(packageName, uriImg, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                        }
-                    }*/
-                    System.out.println("razr "+activity.getApplicationContext().checkCallingPermission(Manifest.permission.READ_EXTERNAL_STORAGE));
+                    System.out.println("razr " + activity.getApplicationContext().checkCallingPermission(Manifest.permission.READ_EXTERNAL_STORAGE));
 
                     try {
-                     //   String bitmap1 = MediaStore.Images.Media.insertImage(activity.getContentResolver(), uriImg.getPath(),"n","desd");
-                     //   System.out.println("tumbmail "+bitmap1);
+                        //   String bitmap1 = MediaStore.Images.Media.insertImage(activity.getContentResolver(), uriImg.getPath(),"n","desd");
+                        //   System.out.println("tumbmail "+bitmap1);
+                        System.out.println(uriImg.getPath());
+                        System.out.println(uriImg.getEncodedPath());
+                        System.out.println(uriImg.getEncodedSchemeSpecificPart());
+                        System.out.println(uriImg.getSchemeSpecificPart());
+                        System.out.println(uriImg.getScheme());
+                        System.out.println(uriImg.getEncodedFragment());
+                        System.out.println(uriImg.getHost());
+                        System.out.println(uriImg.getQueryParameter("content"));
+                        List<String> pathSegments = uriImg.getPathSegments();
+                        for (String s : pathSegments) {
+                            System.out.println(s);
+                        }
                         bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uriImg);
 
-
-                    //    bitmap = MediaStore.Images.Media.getContentUri(uriImg.toString());
-                    }catch ( java.lang.SecurityException e){
+                        //    bitmap = MediaStore.Images.Media.getContentUri(uriImg.toString());
+                    } catch (java.lang.SecurityException e) {
                         System.out.println("ебаные фоточки гугла");
                         bitmap = DEAFAULT_PHOTO;
                         bitmap.eraseColor(Color.BLUE);
                     }
-                 //   bitmap = Bitmap.createScaledBitmap(bitmap1, MASK_HEIGHT, MASK_WIDTH, true);
-                }catch (FileNotFoundException e){
+                    //   bitmap = Bitmap.createScaledBitmap(bitmap1, MASK_HEIGHT, MASK_WIDTH, true);
+                } catch (FileNotFoundException e) {
                     bitmap = DEAFAULT_PHOTO;
                     bitmap.eraseColor(Color.BLUE);
                 }
@@ -149,7 +149,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
             }
             mCanvas.drawBitmap(bitmap, 0, 0, null);
             mCanvas.drawBitmap(bitmapMask, 0, 0, paint);
-           // paint.setXfermode(null);
+            // paint.setXfermode(null);
         } catch (IOException e) {
             e.printStackTrace();
         }

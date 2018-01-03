@@ -23,4 +23,8 @@
     <string name="title_dialog_update_sub_item">изменить вещь: </string>
     <string name="negative_btn_dialog_sub_item_open_detail">закрыть</string>
     <string name="title_dialog_sub_item_open_detail">просмотр: </string>
+    <string name="menu_drawer_wardrobe">Гардероб</string>
+    <string name="menu_drawer_dressing">Примерочная</string>
+    <string name="navigation_bottom_item_previw">превью</string>
+    <string name="navigation_bottom_item_xz">хз пока</string>
 </resources>

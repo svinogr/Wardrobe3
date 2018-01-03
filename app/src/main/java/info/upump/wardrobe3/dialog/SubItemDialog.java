@@ -269,6 +269,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
             case R.id.detail_btn_choose_photo:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
+
                 getActivity().startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
                 break;
         }
