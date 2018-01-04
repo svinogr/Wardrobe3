@@ -1,6 +1,8 @@
 package info.upump.wardrobe3;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import info.upump.wardrobe3.adapter.DressingAdapter;
-import info.upump.wardrobe3.adapter.SubItemAdapter;
 import info.upump.wardrobe3.model.SubItem;
 
 /**
  * Created by explo on 03.01.2018.
  */
 
-public class DressingFragment extends Fragment {
+public class DressingFragment extends Fragment  implements ViewTag{
+    public static final String TAG = "dressingFragment";
     private RecyclerView body, head, legs, foot;
 
     @Nullable
@@ -61,10 +63,15 @@ public class DressingFragment extends Fragment {
         list.add(subItem2);
         list.add(subItem3);
 
-        DressingAdapter subItemAdapter = new DressingAdapter(list,getActivity(),1);
+        DressingAdapter subItemAdapter = new DressingAdapter(getActivity());
         head.setAdapter(subItemAdapter);
 
         return inflate;
 
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

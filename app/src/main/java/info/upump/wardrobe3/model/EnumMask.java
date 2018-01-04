@@ -11,7 +11,7 @@ public enum EnumMask {
     PANTS(R.drawable.mask1);
     private int resource;
 
-    EnumMask( int resource) {
+    EnumMask(int resource) {
         this.resource = resource;
     }
 

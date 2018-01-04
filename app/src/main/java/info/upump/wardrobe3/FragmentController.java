@@ -6,9 +6,8 @@ import android.support.v4.app.Fragment;
  * Created by explo on 01.11.2017.
  */
 
-public interface FragmentController {
+public interface FragmentController extends PermissionController {
     Fragment getCurrentFragment();
-
 
     void setCurrentFragment(Fragment fragment);
 

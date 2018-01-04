@@ -267,7 +267,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                 checkVersion();
                 break;
             case R.id.detail_btn_choose_photo:
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 photoPickerIntent.setType("image/*");
 
                 getActivity().startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
