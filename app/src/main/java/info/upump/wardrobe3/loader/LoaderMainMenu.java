@@ -40,9 +40,6 @@ public class LoaderMainMenu extends AsyncTaskLoader<List<MainMenuItem>> {
                 list.add(mainMenuItem);
             }while (cursor.moveToNext());
         }
-
-
-
         return list;
     }
 

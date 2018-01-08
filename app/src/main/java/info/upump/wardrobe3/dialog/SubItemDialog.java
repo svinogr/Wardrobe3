@@ -384,7 +384,6 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
                 } else {
                     System.out.println("denied");
-                    dismiss();
                 }
         }
 

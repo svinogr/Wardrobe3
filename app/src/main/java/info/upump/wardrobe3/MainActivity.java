@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
@@ -16,8 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,13 +24,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import java.security.acl.Permission;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.OperationAsync;
-import info.upump.wardrobe3.dialog.PermissionDialogFragment;
 import info.upump.wardrobe3.dialog.SubItemDialog;
 
 public class MainActivity extends AppCompatActivity
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     public static final int DETAIL_EDIT_SUB_ACTIVITY_ITEM_RESULT = 101;
     private final static String FRAGMENT_TAG = "fragmentTag";
     private final static String VISIBLE_FRAGMENT = "visibleFragment";
-    private static final int PERMISSION_PIC_CODE = 1;
+    private static final int PERMISSION_CODE = 1;
     private static final int REQUEST_PERMISSION_GALLERY = 10;
     private FragmentTransaction fragmentTransaction;
     public ViewFragmentController viewFragmentController;
@@ -48,13 +51,22 @@ public class MainActivity extends AppCompatActivity
     private String fragmentTag;
     private Bundle savedInstanceState;
     private FloatingActionButton fab;
-    private boolean flagPermission;
+    private final static String[] arrayPermissons = {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA};
+    private final static String[] arrayPermissionDescription = {"Хранилище файлов", "Камера"};
+    private static Map<String, String> mapPermission = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.savedInstanceState = savedInstanceState;
         setContentView(R.layout.activity_main);
+
+        for (int i = 0; i < arrayPermissons.length; i++) {
+            mapPermission.put(arrayPermissons[i], arrayPermissionDescription[i]);
+        }
+
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
         checkFab(false);
@@ -78,52 +90,56 @@ public class MainActivity extends AppCompatActivity
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             System.out.println("запрос PERMISSION на версии SDK " + android.os.Build.VERSION.SDK_INT);
-
             getPermission();
 
+        } else initFirstFragment(savedInstanceState);
+
+    }
+
+    @Override
+    public void getPermission() {
+        System.out.println("getPermission");
+
+        List<String> permissions = new ArrayList<>();
+
+        for (int i = 0; i < arrayPermissons.length; i++) {
+
+            if (!hasPermission(arrayPermissons[i])) {
+                permissions.add(arrayPermissons[i]);
+            }
+        }
+
+        if (permissions.size() > 0) {
+            StringBuilder stringBuilder = new StringBuilder("Для продолжения необходимо разрешить доступ к: ");
+            for (int i = 0; i < permissions.size(); i++) {
+                stringBuilder.append(mapPermission.get(permissions.get(i)));
+                if (i < permissions.size()-1) {
+                    stringBuilder.append(", ");
+                } else stringBuilder.append(".");
+            }
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.drawer_layout), stringBuilder,
+                    Snackbar.LENGTH_LONG);
+            View view = snackbar.getView();
+            TextView textView = view.findViewById(android.support.design.R.id.snackbar_text);
+            textView.setMaxLines(5);
+            snackbar.show();
+
+            String[] permissionsToGet = new String[permissions.size()];
+            permissions.toArray(permissionsToGet);
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    permissionsToGet,
+                    PERMISSION_CODE);
         } else initFirstFragment(savedInstanceState);
 
 
     }
 
-    private void getReRat() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            System.out.println(2);
-            Snackbar.make(findViewById(R.id.drawer_layout), "1 Для продолжения необходимо предоставить доступ к галереи",
-                    Snackbar.LENGTH_LONG).show();
-
-        } else {
-            Snackbar.make(findViewById(R.id.drawer_layout), "3 Вы запретили доступ к галереи",
-                    Snackbar.LENGTH_INDEFINITE).setAction("Настройки", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // getPermission();
-
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(intent, REQUEST_PERMISSION_GALLERY);
-
-                }
-            }).show();
-        }
-    }
-
-    @Override
-    public void getPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println(1);
-            Snackbar.make(findViewById(R.id.drawer_layout), "1 Для продолжения необходимо предоставить доступ к галереи",
-                    Snackbar.LENGTH_LONG).show();
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    PERMISSION_PIC_CODE);
-        } else {
-            System.out.println(3);
-            initFirstFragment(savedInstanceState);
-        }
-
+    private boolean hasPermission(String permission) {
+        System.out.println("hasPermission  " + permission);
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            System.out.println("hasPermission inside  " + permission);
+            return true;
+        } else return false;
 
     }
 
@@ -131,39 +147,72 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        System.out.println("onRequestPermissionsResult ");
+        System.out.println("onRequestPermissionsResult grantResults " + grantResults.length);
+        System.out.println("onRequestPermissionsResult permissions " + permissions.length);
+
         switch (requestCode) {
-            case PermissionDialogFragment.PERMISSION_PIC_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println(4);
-                    // Permission Granted
-                    initFirstFragment(savedInstanceState);
-                } else {
-                      // getPermission();
-                    System.out.println(5);
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                        System.out.println(true);
-                        getPermission();
-                    } else {
-                        System.out.println(false);
+            case PERMISSION_CODE:
+                Map<String, String> mapPermissionDeny = new HashMap<>();
+                Map<String, String> mapPermissionDontAsk = new HashMap<>();
 
-                    Snackbar.make(findViewById(R.id.drawer_layout), "2 Вы запретили доступ к галереи",
-                            Snackbar.LENGTH_INDEFINITE).setAction("Настройки", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                if (grantResults.length > 0) {
 
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getPackageName(), null);
-                            intent.setData(uri);
-                            startActivityForResult(intent, REQUEST_PERMISSION_GALLERY);
+                    for (int i = 0; i < permissions.length; i++) {
+
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
+                            System.out.println(true);
+                            mapPermissionDeny.put(permissions[i], "DENY");
+
+                        } else {
+                            System.out.println(false);
+                            mapPermissionDontAsk.put(permissions[i], "DONTASK");
                         }
-                    }).show();
                     }
 
+                    if (mapPermissionDeny.size() > 0) {
+                        getPermission();
+                    } else if (mapPermissionDontAsk.size() > 0) {
+                        int size = mapPermissionDontAsk.size();
+                        int count = 0;
+
+                        StringBuilder stringBuilder = new StringBuilder("Для продолжения необходимо разрешить доступ к: ");
+                        for (Map.Entry<String, String> entry : mapPermissionDontAsk.entrySet()) {
+                            stringBuilder.append(mapPermission.get(entry.getKey()));
+                            count++;
+                            if (count < size) {
+                                stringBuilder.append(", ");
+                            } else stringBuilder.append(".");
+
+                        }
+
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.drawer_layout), stringBuilder,
+                                Snackbar.LENGTH_INDEFINITE).setAction("Настройки", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                                intent.setData(uri);
+                                startActivityForResult(intent, REQUEST_PERMISSION_GALLERY);
+                            }
+                        });
+
+                        View view = snackbar.getView();
+                        TextView textView = view.findViewById(android.support.design.R.id.snackbar_text);
+                        textView.setMaxLines(5);
+                        snackbar.show();
+
+                    } else initFirstFragment(savedInstanceState);
                 }
+
+
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
+
     }
 
     private void initFirstFragment(Bundle savedInstanceState) {
@@ -192,7 +241,7 @@ public class MainActivity extends AppCompatActivity
             // fragmentTag = savedInstanceState.getString(FRAGMENT_TAG);
 
             fragment = getSupportFragmentManager().findFragmentById(id);
-            //  fragmentTag = ((ViewFragmentController) fragment).getFragmentTag();
+            //    fragmentTag = ((ViewFragmentController) fragment).getFragmentTag();
             fragmentTag = ((ViewTag) fragment).getFragmentTag();
             if (fragment instanceof ViewFragmentController) {
                 ((ViewFragmentController) fragment).restartLoader();
@@ -200,8 +249,6 @@ public class MainActivity extends AppCompatActivity
             } else checkFab(false);
             System.out.println("bundle state " + fragmentTag);
             System.out.println("bundle state frag " + fragment);
-            //  viewFragmentController = (ViewFragmentController) fragment;
-
         }
     }
 
@@ -259,8 +306,6 @@ public class MainActivity extends AppCompatActivity
             DressingFragment dressingFragment = new DressingFragment();
             setCurrentFragment(dressingFragment);
             checkFab(false);
-
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -275,7 +320,6 @@ public class MainActivity extends AppCompatActivity
 
         switch (fragmentTag) {
             case MainFragment.TAG:
-
                 dialogFragment = new MainItemDialog();
                 bundle = new Bundle();
                 bundle.putInt(OperationAsync.OPERATION, OperationAsync.SAVE);
@@ -298,19 +342,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public Fragment getCurrentFragment() {
-
         return fragment;
     }
 
     @Override
     public void setCurrentFragment(Fragment fragment) {
-        // this.fragment = fragment;
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
         fragmentTransaction.replace(R.id.mainContainer, fragment, VISIBLE_FRAGMENT);
-     /*   if(fragment instanceof ViewFragmentController){
-            viewFragmentController = (ViewFragmentController) fragment;
-        }*/
         if (fragment instanceof MainFragment) {
             fragmentTag = MainFragment.TAG;
             this.fragment = fragment;
@@ -318,9 +357,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             fragmentTransaction.addToBackStack(null);
         }
-
-
-        //fragmentTransaction.commit();
         fragmentTransaction.commitAllowingStateLoss();// чтобы не ьыло ошибки при сохранении savedInstance
 
     }
@@ -329,7 +365,6 @@ public class MainActivity extends AppCompatActivity
     public long getIdItemCurrentFragment() {
         ViewFragmentController fragment = (ViewFragmentController) getCurrentFragment();
         if (fragment != null) {
-            System.out.println("id parent " + fragment.getIdDb());
             return fragment.getIdDb();
         }
         return -1;
@@ -346,7 +381,6 @@ public class MainActivity extends AppCompatActivity
         //     super.onSaveInstanceState(outState);
         System.out.println("onSaveInstanceState");
         System.out.println(fragment);
-        // outState.putString(FRAGMENT_TAG, fragmentTag);
         if (fragment != null) {
             outState.putInt(FRAGMENT_TAG, fragment.getId());
         }

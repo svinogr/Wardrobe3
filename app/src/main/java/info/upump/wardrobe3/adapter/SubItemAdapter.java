@@ -116,20 +116,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
                     System.out.println("razr " + activity.getApplicationContext().checkCallingPermission(Manifest.permission.READ_EXTERNAL_STORAGE));
 
                     try {
-                        //   String bitmap1 = MediaStore.Images.Media.insertImage(activity.getContentResolver(), uriImg.getPath(),"n","desd");
-                        //   System.out.println("tumbmail "+bitmap1);
-                        System.out.println(uriImg.getPath());
-                        System.out.println(uriImg.getEncodedPath());
-                        System.out.println(uriImg.getEncodedSchemeSpecificPart());
-                        System.out.println(uriImg.getSchemeSpecificPart());
-                        System.out.println(uriImg.getScheme());
-                        System.out.println(uriImg.getEncodedFragment());
-                        System.out.println(uriImg.getHost());
-                        System.out.println(uriImg.getQueryParameter("content"));
-                        List<String> pathSegments = uriImg.getPathSegments();
-                        for (String s : pathSegments) {
-                            System.out.println(s);
-                        }
+
                         bitmap = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), uriImg);
 
                         //    bitmap = MediaStore.Images.Media.getContentUri(uriImg.toString());

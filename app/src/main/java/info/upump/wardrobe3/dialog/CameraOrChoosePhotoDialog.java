@@ -1,3 +1,4 @@
+/*
 package info.upump.wardrobe3.dialog;
 
 import android.app.AlertDialog;
@@ -79,7 +80,8 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
                 break;
             case R.id.dialog_choose_photo:
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
+                photoPickerIntent.setType("image*/
+/*");
                 startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);
                 break;
         }
@@ -170,9 +172,15 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
         File file = null;
         try {
             file = File.createTempFile(
-                    name,  /* prefix */
-                    ".jpg",         /* suffix */
-                    directory      /* directory */
+                    name,  */
+/* prefix *//*
+
+                    ".jpg",         */
+/* suffix *//*
+
+                    directory      */
+/* directory *//*
+
             );
         } catch (IOException e) {
             e.printStackTrace();
@@ -189,3 +197,4 @@ public class CameraOrChoosePhotoDialog extends DialogFragment implements View.On
     }
 }
 
+*/
