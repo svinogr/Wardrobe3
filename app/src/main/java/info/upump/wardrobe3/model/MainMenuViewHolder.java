@@ -2,11 +2,7 @@ package info.upump.wardrobe3.model;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
-
-import com.daimajia.swipe.SwipeLayout;
 
 import info.upump.wardrobe3.R;
 

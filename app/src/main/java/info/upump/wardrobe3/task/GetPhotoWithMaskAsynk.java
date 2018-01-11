@@ -1,3 +1,4 @@
+/*
 package info.upump.wardrobe3.task;
 
 import android.app.Activity;
@@ -17,9 +18,11 @@ import info.upump.wardrobe3.mask.MaskedDrawablePorterDuffDstIn;
 import info.upump.wardrobe3.model.SubItem;
 import info.upump.wardrobe3.model.SubItemViewHolder;
 
+*/
 /**
  * Created by explo on 29.11.2017.
- */
+ *//*
+
 
 public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
     private SubItemViewHolder holder;
@@ -73,3 +76,4 @@ public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
         holder.imageView.setImageDrawable(drawable);
     }
 }
+*/

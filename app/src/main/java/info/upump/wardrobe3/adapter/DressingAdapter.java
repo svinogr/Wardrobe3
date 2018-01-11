@@ -40,11 +40,12 @@ public class DressingAdapter extends SubItemAdapter {
 
     @Override
     public void onBindViewHolder(final SubItemViewHolder holder, final int position) {
-        System.out.println(subItemList.get(position).getImg());
+        holder.bind(subItemList.get(position),enumMaskOrdinal,activity);
+       /* System.out.println(subItemList.get(position).getImg());
         System.out.println(subItemList.size());
     //    holder.imageView.setImageBitmap(createMask(subItemList.get(position)));
         holder.imageView.setImageURI(Uri.parse(subItemList.get(position).getImg()));
-        holder.textView.setText(subItemList.get(position).getName());
+        holder.textView.setText(subItemList.get(position).getName());*/
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

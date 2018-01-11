@@ -1,6 +1,6 @@
 package info.upump.wardrobe3.dialog;
 
-import android.app.AlertDialog;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -92,6 +93,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
 
         View inflate = layoutInflater.inflate(R.layout.dialog_fragment_sub_item_detail, null);
+
         name = inflate.findViewById(R.id.detail_name);
         cost = inflate.findViewById(R.id.detail_cost);
         description = inflate.findViewById(R.id.detail_description);
@@ -121,11 +123,26 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
 
     }
 
+    public static SubItemDialog getDetalDialog(SubItem subItem, int mainitemOperation){
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(OperationAsync.OPERATION,mainitemOperation);
+        bundle.putLong(Constants.ID_PARENT,subItem.getIdMainItem());
+        bundle.putString(Constants.NAME,subItem.getName());
+        bundle.putFloat(Constants.COST,subItem.getCost());
+        bundle.putString(Constants.DESCRIPTION,subItem.getDescription());
+        bundle.putString(Constants.IMG,subItem.getImg());
+        SubItemDialog subItemDialog = new SubItemDialog();
+        subItemDialog.setArguments(bundle);
+        return subItemDialog;
+
+    }
+
     private AlertDialog.Builder createOpenDetailDialog() {
         name.setText(getArguments().getString(Constants.NAME));
         cost.setText(String.valueOf(getArguments().getFloat(Constants.COST)));
         description.setText(getArguments().getString(Constants.DESCRIPTION));
-        image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
+      //  image.setImageURI(Uri.parse(getArguments().getString(Constants.IMG)));
         image.setOnClickListener(null);
         choosePhotoFab.setVisibility(View.INVISIBLE);
         takePhotoFab.setVisibility(View.INVISIBLE);
