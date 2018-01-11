@@ -25,4 +25,5 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder {
         imageView = itemView.findViewById(R.id.sub_image_item);
 
     }
+
 }

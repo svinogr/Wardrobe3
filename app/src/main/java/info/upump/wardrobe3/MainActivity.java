@@ -147,14 +147,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        System.out.println("onRequestPermissionsResult ");
-        System.out.println("onRequestPermissionsResult grantResults " + grantResults.length);
-        System.out.println("onRequestPermissionsResult permissions " + permissions.length);
 
         switch (requestCode) {
             case PERMISSION_CODE:
-                Map<String, String> mapPermissionDeny = new HashMap<>();
-                Map<String, String> mapPermissionDontAsk = new HashMap<>();
+                List<String> mapPermissionDeny = new ArrayList<>();
+                List<String> mapPermissionDontAsk = new ArrayList<>();
 
                 if (grantResults.length > 0) {
 
@@ -162,11 +159,11 @@ public class MainActivity extends AppCompatActivity
 
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])) {
                             System.out.println(true);
-                            mapPermissionDeny.put(permissions[i], "DENY");
+                            mapPermissionDeny.add(permissions[i]);
 
                         } else {
                             System.out.println(false);
-                            mapPermissionDontAsk.put(permissions[i], "DONTASK");
+                            mapPermissionDontAsk.add(permissions[i]);
                         }
                     }
 
@@ -177,8 +174,8 @@ public class MainActivity extends AppCompatActivity
                         int count = 0;
 
                         StringBuilder stringBuilder = new StringBuilder("Для продолжения необходимо разрешить доступ к: ");
-                        for (Map.Entry<String, String> entry : mapPermissionDontAsk.entrySet()) {
-                            stringBuilder.append(mapPermission.get(entry.getKey()));
+                        for (String permission : mapPermissionDontAsk) {
+                            stringBuilder.append(mapPermission.get(permission));
                             count++;
                             if (count < size) {
                                 stringBuilder.append(", ");
@@ -205,7 +202,6 @@ public class MainActivity extends AppCompatActivity
 
                     } else initFirstFragment(savedInstanceState);
                 }
-
 
                 break;
             default:

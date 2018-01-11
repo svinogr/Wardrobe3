@@ -3,10 +3,6 @@ package info.upump.wardrobe3.adapter;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentResolver;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -15,10 +11,8 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,9 +24,7 @@ import java.io.IOException;
 import java.util.List;
 
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.SubFragment;
 import info.upump.wardrobe3.dialog.Constants;
-import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.model.EnumMask;
@@ -42,7 +34,7 @@ import info.upump.wardrobe3.model.SubItemViewHolder;
 public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> implements MaskCreator {
     protected List<SubItem> subItemList;
     protected AppCompatActivity activity;
-    protected static final Bitmap DEAFAULT_PHOTO = Bitmap.createBitmap(300, 300,
+    protected static final Bitmap DEFAULT_PHOTO = Bitmap.createBitmap(300, 300,
             Bitmap.Config.ARGB_8888);
     protected int enumMaskOrdinal = 0;
     protected static final int MASK_WIDTH = 300;
@@ -122,16 +114,16 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> impl
                         //    bitmap = MediaStore.Images.Media.getContentUri(uriImg.toString());
                     } catch (java.lang.SecurityException e) {
                         System.out.println("ебаные фоточки гугла");
-                        bitmap = DEAFAULT_PHOTO;
+                        bitmap = DEFAULT_PHOTO;
                         bitmap.eraseColor(Color.BLUE);
                     }
                     //   bitmap = Bitmap.createScaledBitmap(bitmap1, MASK_HEIGHT, MASK_WIDTH, true);
                 } catch (FileNotFoundException e) {
-                    bitmap = DEAFAULT_PHOTO;
+                    bitmap = DEFAULT_PHOTO;
                     bitmap.eraseColor(Color.BLUE);
                 }
             } else {
-                bitmap = DEAFAULT_PHOTO;
+                bitmap = DEFAULT_PHOTO;
                 bitmap.eraseColor(Color.BLUE);
             }
             mCanvas.drawBitmap(bitmap, 0, 0, null);

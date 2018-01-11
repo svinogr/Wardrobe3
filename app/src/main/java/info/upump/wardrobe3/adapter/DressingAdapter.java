@@ -24,23 +24,17 @@ import info.upump.wardrobe3.model.SubItemViewHolder;
 public class DressingAdapter extends SubItemAdapter {
     private int levelFrom;
     private int levelTo;
-    //private static final SubItem subitem = new SubItem();
     private static final int DEFAULT_MASK = 0;
-    private static List<SubItem> subItemList  = new ArrayList<>();
-  //  private static SubItem subItem = new SubItem();
 
-
-    public DressingAdapter( Activity activity ) {
-
+    public DressingAdapter(List<SubItem> subItemList, Activity activity ) {
         super(subItemList, activity, DEFAULT_MASK);
+
         Uri parse = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE+"://" + activity.getResources().getResourcePackageName(R.drawable.question)+
                 '/' +  activity.getResources().getResourceTypeName(R.drawable.question) + '/' + activity.getResources().getResourceEntryName(R.drawable.question));
-        System.out.println(parse);
         SubItem subItem = new SubItem();
-        subItem.setName("пусто");
+        subItem.setName("выберите ящик");
         subItem.setImg(parse.toString());
         subItemList.add(subItem);
-        System.out.println("1");
     }
 
 
