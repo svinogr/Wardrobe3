@@ -29,7 +29,7 @@ import java.util.List;
 import info.upump.wardrobe3.FragmentController;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubFragment;
-import info.upump.wardrobe3.ViewFragmentController;
+import info.upump.wardrobe3.ViewFragmentControllerCallback;
 import info.upump.wardrobe3.db.SubItemTableDao;
 import info.upump.wardrobe3.model.SubItem;
 
@@ -48,7 +48,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     public static final String TAG = "dialogSubDetail";
 
     private AlertDialog.Builder builder;
-    private ViewFragmentController viewFragmentController;
+    private ViewFragmentControllerCallback viewFragmentControllerCallback;
     private AppCompatActivity activity;
     private EditText name;
     private EditText cost;
@@ -79,11 +79,11 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         System.out.println(22222);
         if (getActivity() instanceof FragmentController) {
-            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+            viewFragmentControllerCallback = (ViewFragmentControllerCallback) ((FragmentController) getActivity()).getCurrentFragment();
         }
 
 
-        System.out.println(viewFragmentController);
+        System.out.println(viewFragmentControllerCallback);
         setCancelable(false);
         int operation = getArguments().getInt(OperationAsync.OPERATION);
         idParent = getArguments().getLong(Constants.ID_PARENT);
@@ -211,11 +211,11 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                         subItemToDB.setDescription(description.getText().toString());
                         subItemToDB.setImg(uri.toString());
 
-                        if (viewFragmentController != null) {
-                            System.out.println(viewFragmentController);
-                            viewFragmentController.updateItem(subItemToDB);
+                        if (viewFragmentControllerCallback != null) {
+                            System.out.println(viewFragmentControllerCallback);
+                            viewFragmentControllerCallback.updateItem(subItemToDB);
                         }
-                        System.out.println("viewFragmentController: " + viewFragmentController);
+                        System.out.println("viewFragmentControllerCallback: " + viewFragmentControllerCallback);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
@@ -223,7 +223,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
 
-                        viewFragmentController.cancelUpdate();
+                        viewFragmentControllerCallback.cancelUpdate();
                     }
                 });
 
@@ -257,8 +257,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                         if (uri != null) {
                             subItemToDB.setImg(uri.toString());
                         }
-                        if (viewFragmentController != null) {
-                            viewFragmentController.addNewItem(subItemToDB);
+                        if (viewFragmentControllerCallback != null) {
+                            viewFragmentControllerCallback.addNewItem(subItemToDB);
                         }
                     }
                 })
@@ -284,7 +284,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                 checkVersion();
                 break;
             case R.id.detail_btn_choose_photo:
-                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+               Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+           //     Intent photoPickerIntent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 photoPickerIntent.setType("image/*");
 
                 getActivity().startActivityForResult(photoPickerIntent, SubFragment.CHOOSE_PHOTO_RESULT);

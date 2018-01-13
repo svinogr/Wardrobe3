@@ -14,8 +14,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import info.upump.wardrobe3.FragmentController;
+import info.upump.wardrobe3.MainFragment;
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.ViewFragmentController;
+import info.upump.wardrobe3.ViewFragmentControllerCallback;
 import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.MainMenuItem;
 
@@ -29,13 +30,13 @@ public class MainItemDialog extends DialogFragment {
     private AlertDialog.Builder builder;
     private Spinner spinner;
 
-    private ViewFragmentController viewFragmentController;
-
+    private ViewFragmentControllerCallback viewFragmentControllerCallback;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         System.out.println("onAttach");
+
 
     }
 
@@ -45,16 +46,27 @@ public class MainItemDialog extends DialogFragment {
         System.out.println("onDetach");
     }
 
+    public static DialogFragment getInstanceMainDialog(MainMenuItem mainMenuItem, int operation) {
+        MainItemDialog mainItemDialog = new MainItemDialog();
+        Bundle bundle = new Bundle();
+        bundle.putInt(OperationAsync.OPERATION, operation);
+        if (mainMenuItem != null) {
+            bundle.putLong(Constants.ID, mainMenuItem.getId());
+            bundle.putString(Constants.NAME, mainMenuItem.getName());
+           // bundle.putString(Constants.IMG, mainMenuItem.getImg()); TODO включить в случае реализации индивидуальной картинки
+        }
+        mainItemDialog.setArguments(bundle);
+        return mainItemDialog;
+
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-      //  setRetainInstance(true);
-        viewFragmentController = getViewFragmentController();
-/*
-        if (getActivity() instanceof FragmentController) {
-            System.out.println(2);
-            viewFragmentController = (ViewFragmentController) ((FragmentController)getActivity()).getCurrentFragment();
-        }*/
-        System.out.println(viewFragmentController);
+        //  setRetainInstance(true);
+        //viewFragmentControllerCallback = getViewFragmentControllerCallback();
+        viewFragmentControllerCallback = (ViewFragmentControllerCallback) getTargetFragment();
+
+        System.out.println(viewFragmentControllerCallback);
 
         setCancelable(false);// запрещаем закрытие диалога кликом в путсоту
 
@@ -99,6 +111,7 @@ public class MainItemDialog extends DialogFragment {
                 setPositiveButton(R.string.positiv_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         if (textNameItem.getText().toString().equals("")) {
                             return;
                         }
@@ -107,23 +120,27 @@ public class MainItemDialog extends DialogFragment {
                         mainMenuItem.setName(textNameItem.getText().toString());
                         mainMenuItem.setId(getArguments().getLong("id"));
                         mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
-                        if (viewFragmentController == null) {
-                            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+                       /*
+                        было
+                        if (viewFragmentControllerCallback == null) {
+                            viewFragmentControllerCallback = (ViewFragmentControllerCallback) ((FragmentController) getActivity()).getCurrentFragment();
                         }
-                        System.out.println(viewFragmentController);
-                        viewFragmentController.updateItem(mainMenuItem);
+                        System.out.println(viewFragmentControllerCallback);
+                        viewFragmentControllerCallback.updateItem(mainMenuItem);*/
+                       //стало
+                        viewFragmentControllerCallback.updateItem(mainMenuItem);
                     }
                 })
                 .setNegativeButton(R.string.negative_btn_dialog_new_main_item, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.d("No", "No");
-                        System.out.println(((FragmentController)getActivity()).getCurrentFragment());
-                        if (viewFragmentController == null) {
-                            viewFragmentController = (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+                        System.out.println(((FragmentController) getActivity()).getCurrentFragment());
+                        if (viewFragmentControllerCallback == null) {
+                            viewFragmentControllerCallback = (ViewFragmentControllerCallback) ((FragmentController) getActivity()).getCurrentFragment();
                         }
-                        System.out.println("отмена "+viewFragmentController);
-                        viewFragmentController.cancelUpdate();
+                        System.out.println("отмена " + viewFragmentControllerCallback);
+                        viewFragmentControllerCallback.cancelUpdate();
                     }
                 });
 
@@ -147,11 +164,11 @@ public class MainItemDialog extends DialogFragment {
 
                 MainMenuItem mainMenuItem = new MainMenuItem();
                 mainMenuItem.setName(nameOfNewItem);
-                System.out.println("EnumMask.values( "+EnumMask.values()[selectedSpinnerPosition].ordinal());
+                System.out.println("EnumMask.values( " + EnumMask.values()[selectedSpinnerPosition].ordinal());
                 mainMenuItem.setEnumMask(EnumMask.values()[selectedSpinnerPosition]);
 
-                if (viewFragmentController != null) {
-                    viewFragmentController.addNewItem(mainMenuItem);
+                if (viewFragmentControllerCallback != null) {
+                    viewFragmentControllerCallback.addNewItem(mainMenuItem);
                 }
             }
         });
@@ -166,8 +183,8 @@ public class MainItemDialog extends DialogFragment {
 
     }
 
-    ViewFragmentController getViewFragmentController(){
-        return (ViewFragmentController) ((FragmentController) getActivity()).getCurrentFragment();
+    ViewFragmentControllerCallback getViewFragmentControllerCallback() {
+        return (ViewFragmentControllerCallback) ((FragmentController) getActivity()).getCurrentFragment();
     }
 
 

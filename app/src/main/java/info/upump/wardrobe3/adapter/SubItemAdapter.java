@@ -1,33 +1,16 @@
 package info.upump.wardrobe3.adapter;
 
 
-import android.Manifest;
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.dialog.Constants;
-import info.upump.wardrobe3.dialog.OperationAsync;
-import info.upump.wardrobe3.dialog.SubItemDialog;
-import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.SubItem;
 import info.upump.wardrobe3.model.SubItemViewHolder;
 
@@ -45,7 +28,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> {
 
     @Override
     public SubItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_sub_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_item, parent, false);
         return new SubItemViewHolder(view);
     }
 

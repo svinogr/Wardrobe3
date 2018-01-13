@@ -1,9 +1,6 @@
 package info.upump.wardrobe3;
 
-import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -24,21 +21,23 @@ import java.util.concurrent.ExecutionException;
 import info.upump.wardrobe3.adapter.SubItemAdapter;
 import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.Constants;
-import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.dialog.SubItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderSubItem;
+import info.upump.wardrobe3.model.EnumMask;
+import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
 
 /**
  * Created by explo on 30.10.2017.
  */
 
-public class SubFragment extends Fragment implements ViewFragmentController<SubItem>, LoaderManager.LoaderCallbacks<List<SubItem>> {
+public class SubFragment extends Fragment implements ViewFragmentControllerCallback<SubItem>, LoaderManager.LoaderCallbacks<List<SubItem>> {
     public static final String TAG = "subFragment";
     public static final int CAMERA_RESULT = 2;
     public static final int CHOOSE_PHOTO_RESULT = 3;
+    private MainMenuItem mainMenuItem;
     private RecyclerView recyclerView;
     private List<SubItem> subItemList = new ArrayList<>();
     private SubItemAdapter subItemAdapter;
@@ -49,9 +48,6 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
     private int resourceMask;
     private String title;
 
-    public SubItemAdapter getSubItemAdapter() {
-        return subItemAdapter;
-    }
 
     @Nullable
     @Override
@@ -62,9 +58,7 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         System.out.println("из фрагме " + idParent);
         setTitle();
         View root = inflater.inflate(R.layout.fragment_sub_item, container, false);
-
-        /// subItemAdapter = new SubItemAdapter(subItemList, getActivity());
-        //test enum
+        getActivity().setTitle(mainMenuItem.getName());
 
         subItemAdapter = new SubItemAdapter(subItemList, getActivity(), resourceMask);
 
@@ -80,11 +74,6 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
         return root;
     }
 
-    /*@Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(0, null, this);
-    }*/
 
     @Override
     public void onAttach(Context context) {
@@ -283,12 +272,11 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     @Override
     public Loader<List<SubItem>> onCreateLoader(int id, Bundle args) {
-        idParent = getArguments().getLong(Constants.ID_PARENT);// получаю номер родителя из преддыдшего фрагм из бандл
-        // test enum
-        resourceMask = getArguments().getInt(Constants.MASK);
-        title = getArguments().getString(Constants.NAME);
-        System.out.println("coplfybt kjflthf " + idParent);
-        loaderSubItem = new LoaderSubItem(getContext(), idParent);
+        mainMenuItem = new MainMenuItem();
+        mainMenuItem.setId(getArguments().getLong(Constants.ID));
+        mainMenuItem.setEnumMask(EnumMask.values()[getArguments().getInt(Constants.MASK)]);//pizdec
+        mainMenuItem.setName(getArguments().getString(Constants.NAME));
+        loaderSubItem = new LoaderSubItem(getContext(), mainMenuItem.getId());
         return loaderSubItem;
     }
 
@@ -341,6 +329,15 @@ public class SubFragment extends Fragment implements ViewFragmentController<SubI
 
     public long getIdParent() {
         return idParent;
+    }
+    public static SubFragment getInstanceSubFragment(MainMenuItem mainMenuItem){
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constants.ID,mainMenuItem.getId());
+        bundle.putInt(Constants.MASK,mainMenuItem.getEnumMask().ordinal());
+        bundle.putString(Constants.NAME,mainMenuItem.getName());
+        SubFragment subFragment = new SubFragment();
+        subFragment.setArguments(bundle);
+        return subFragment;
     }
 
 }

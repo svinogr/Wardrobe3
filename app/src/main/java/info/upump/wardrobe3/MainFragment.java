@@ -1,10 +1,11 @@
 package info.upump.wardrobe3;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,7 +25,6 @@ import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.MainItemDialog;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.OperationAsync;
-import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
 import info.upump.wardrobe3.model.MainMenuItem;
 
@@ -32,30 +32,33 @@ import info.upump.wardrobe3.model.MainMenuItem;
  * Created by explo on 26.10.2017.
  */
 
-public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<MainMenuItem>>, ViewFragmentController<MainMenuItem> {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<MainMenuItem>>, ViewFragmentControllerCallback<MainMenuItem>, View.OnClickListener {
+    private static final int CREATE_NEW_MAIN_ITEM = 1;
     private List<MainMenuItem> mainMenuItemList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mainAdapter;
     public static final String TAG = "mainFragment";
     private MainMenuItem tempMainItem;
     private int temPositionMainItem;
+    private FloatingActionButton floatingActionButton;
+    public ViewFragmentControllerCallback<MainMenuItem> iViewFragmentControllerCallback;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("onCreateView-Main");
-        setRetainInstance(true);
+        //  setRetainInstance(true);
 
         View root = inflater.inflate(R.layout.fragment_main, container, false);
+        floatingActionButton = root.findViewById(R.id.main_fragment_fab);
+        floatingActionButton.setOnClickListener(this);
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
 
         mainAdapter = new MainAdapter(mainMenuItemList, getActivity());
-        //  mainAdapter = new MainAdapter(mainMenuItemList, getContext());
 
-        recyclerView = root.findViewById(R.id.recycledFragmentMain);
+        recyclerView = root.findViewById(R.id.main_fragment_recycled);
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
         recyclerView.setAdapter(mainAdapter);
 
@@ -98,20 +101,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     }
 
-    public RecyclerView.Adapter getMainAdapter() {
-        return mainAdapter;
-    }
-
-    public List<MainMenuItem> getMainMenuItemList() {
-        return mainMenuItemList;
-    }
-
-
-    public RecyclerView getRecyclerView() {
-        return recyclerView;
-    }
-
-
     @Override
     public void addNewItem(MainMenuItem object) {
         MainItemOperationAsync addItemAsync = new MainItemOperationAsync(getActivity(), OperationAsync.SAVE);
@@ -142,12 +131,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void updateItem(MainMenuItem object) {
-
-        MainItemOperationAsync addItemAsynck = new MainItemOperationAsync(getActivity(), OperationAsync.UPDATE);
-        addItemAsynck.execute(object);
+        MainItemOperationAsync addItemAsync = new MainItemOperationAsync(getActivity(), OperationAsync.UPDATE);
+        addItemAsync.execute(object);
         long resultUpdate = 0;
         try {
-            resultUpdate = addItemAsynck.get();
+            resultUpdate = addItemAsync.get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -167,7 +155,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                     }
 
                 }
-
 
                 System.out.println("обновили адаптер");
             }
@@ -260,6 +247,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void editItem(int positionMainItem) {
+        //добавить новый вызов чеорез статик
         temPositionMainItem = positionMainItem;
         MainItemDialog dialogFragment = new MainItemDialog();
         MainMenuItem mainMenuItem = mainMenuItemList.get(positionMainItem);
@@ -299,6 +287,23 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void setTitle() {
         getActivity().setTitle("Комод");
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        System.out.println(v.getId());
+        switch (v.getId()) {
+            case R.id.main_fragment_fab:
+                DialogFragment instanceMainDialog = MainItemDialog.getInstanceMainDialog(null, OperationAsync.SAVE);
+                instanceMainDialog.setTargetFragment(this, CREATE_NEW_MAIN_ITEM);
+                instanceMainDialog.show(getActivity().getSupportFragmentManager(), MainItemDialog.TAG);
+                break;
+        }
+    }
+
+    public static MainFragment getInstanceMainFragment(){
+        return new MainFragment();
 
     }
 

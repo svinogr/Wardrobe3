@@ -12,5 +12,5 @@ public interface FragmentController extends PermissionController {
     void setCurrentFragment(Fragment fragment);
 
     long getIdItemCurrentFragment();
-    ViewFragmentController getViewFragmentController();
+    ViewFragmentControllerCallback getViewFragmentControllerCallback();
 }

@@ -1,7 +1,6 @@
 package info.upump.wardrobe3.model;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.FileNotFoundException;
@@ -25,8 +23,6 @@ import java.io.IOException;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.SubItemDialog;
-import info.upump.wardrobe3.mask.MaskedDrawable;
-import info.upump.wardrobe3.mask.MaskedDrawablePorterDuffDstIn;
 
 /**
  * Created by explo on 02.11.2017.
@@ -48,8 +44,8 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder  implements View.
         super(itemView);
         itemView.setOnClickListener(this);
         this.context = itemView.getContext();
-        textView = itemView.findViewById(R.id.sub_item_text_view);
-        imageView = itemView.findViewById(R.id.sub_image_item);
+        textView = itemView.findViewById(R.id.recycled_text_view_item);
+        imageView = itemView.findViewById(R.id.recycled_image_item);
 
     }
     public void bind(SubItem subItem, int enumMaskOrdinal,AppCompatActivity activity){

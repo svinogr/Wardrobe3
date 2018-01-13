@@ -3,7 +3,6 @@ package info.upump.wardrobe3.callback;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import info.upump.wardrobe3.R;
-import info.upump.wardrobe3.ViewFragmentController;
+import info.upump.wardrobe3.ViewFragmentControllerCallback;
 import info.upump.wardrobe3.model.MainMenuItem;
 
 /**
@@ -19,11 +18,11 @@ import info.upump.wardrobe3.model.MainMenuItem;
  */
 
 public class SwipeCallback extends ItemTouchHelper.SimpleCallback {
-    private ViewFragmentController<MainMenuItem> viewFragmentController;
+    private ViewFragmentControllerCallback<MainMenuItem> viewFragmentControllerCallback;
 
-    public SwipeCallback(ViewFragmentController viewFragmentController) {
+    public SwipeCallback(ViewFragmentControllerCallback viewFragmentControllerCallback) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.viewFragmentController = viewFragmentController;
+        this.viewFragmentControllerCallback = viewFragmentControllerCallback;
     }
 
     @Override
@@ -66,10 +65,10 @@ public class SwipeCallback extends ItemTouchHelper.SimpleCallback {
         int temPositionMainItem = viewHolder.getAdapterPosition();
         switch (direction) {
             case 8:
-                viewFragmentController.editItem(temPositionMainItem);
+                viewFragmentControllerCallback.editItem(temPositionMainItem);
                 break;
             case 4:
-                viewFragmentController.deleteItem(temPositionMainItem);
+                viewFragmentControllerCallback.deleteItem(temPositionMainItem);
                 break;
         }
 

@@ -2,6 +2,7 @@ package info.upump.wardrobe3.adapter;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,41 +33,46 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     public MainAdapter(List<MainMenuItem> mainMenuItemList, Activity activity) {
         this.mainMenuItemList = mainMenuItemList;
         this.activity = activity;
-        if(activity instanceof FragmentController){
-            fragmentController = (FragmentController)activity;
+        if (activity instanceof FragmentController) {
+            fragmentController = (FragmentController) activity;
         }
     }
 
     @Override
     public MainMenuViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_main_menu, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card_item, parent, false);
         return new MainMenuViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(MainMenuViewHolder holder, int position) {
-        final long id = mainMenuItemList.get(position).getId();
-        final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
-        final String name = mainMenuItemList.get(position).getName();
+        final MainMenuItem mainMenuItem = mainMenuItemList.get(position);
 
+      /*  final long id = mainMenuItemList.get(position).getId();
+        final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
+        final String name = mainMenuItemList.get(position).getName();*/
+        holder.bind(mainMenuItem);
         holder.name.setText(mainMenuItemList.get(position).getName());
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                System.out.println("v adaotere if "+id);
-                bundle.putLong(Constants.ID_PARENT,id);
-                bundle.putString(Constants.NAME,name);
-                bundle.putInt(Constants.MASK,resourceMask);
+                SubFragment subFragment = SubFragment.getInstanceSubFragment(mainMenuItem);
+                ((MainActivity) activity).createFragment(subFragment);
+               /* Bundle bundle = new Bundle();
+                System.out.println("v adaotere if " + id);
+                bundle.putLong(Constants.ID_PARENT, id);
+                bundle.putString(Constants.NAME, name);
+                bundle.putInt(Constants.MASK, resourceMask);
 
                 SubFragment fragment = new SubFragment();
                 fragment.setArguments(bundle);
                 fragmentController.setCurrentFragment(fragment);
-                System.out.println(fragment.getTag());
+                System.out.println(fragment.getTag());*/
 
             }
         });
-
 
 
     }
