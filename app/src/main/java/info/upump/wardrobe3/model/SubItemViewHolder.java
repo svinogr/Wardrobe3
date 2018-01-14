@@ -63,7 +63,7 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder  implements View.
         int resourceMask = enumMask.getResource();
         System.out.println(resourceMask);
         Bitmap bitmapMask = Bitmap.createScaledBitmap(Bitmap.createBitmap(
-                BitmapFactory.decodeResource(   context.getResources(), resourceMask)), MASK_WIDTH, MASK_HEIGHT, false);
+                BitmapFactory.decodeResource(context.getResources(), resourceMask)), MASK_WIDTH, MASK_HEIGHT, false);
 
         Bitmap result = Bitmap.createBitmap(bitmapMask.getWidth(), bitmapMask.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas mCanvas = new Canvas(result);

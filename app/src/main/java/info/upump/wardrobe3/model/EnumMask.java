@@ -7,9 +7,24 @@ import info.upump.wardrobe3.R;
  */
 
 public enum EnumMask {
-    TSHORT(R.drawable.mask_circle),
-    PANTS(R.drawable.mask1);
+    TSHORT(R.drawable.mask_circle){
+        String name = "футболки";
+
+        @Override
+       public String getVisibleName() {
+            return name;
+        }
+    },
+    PANTS(R.drawable.mask1){
+        String name = "штаны";
+        @Override
+        public String getVisibleName() {
+            return name;
+        }
+    };
     private int resource;
+    public abstract String getVisibleName();
+
 
     EnumMask(int resource) {
         this.resource = resource;

@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 import info.upump.wardrobe3.adapter.MainAdapter;
 import info.upump.wardrobe3.callback.SwipeCallback;
 import info.upump.wardrobe3.dialog.MainItemDialog;
+import info.upump.wardrobe3.dialog.MainItemFragment;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
@@ -295,9 +296,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         System.out.println(v.getId());
         switch (v.getId()) {
             case R.id.main_fragment_fab:
-                DialogFragment instanceMainDialog = MainItemDialog.getInstanceMainDialog(null, OperationAsync.SAVE);
+              //  DialogFragment instanceMainDialog = MainItemDialog.getInstanceMainDialog(null, OperationAsync.SAVE);
+                MainItemFragment instanceMainDialog = MainItemFragment.getInstanceMainDialog(null, OperationAsync.SAVE);
                 instanceMainDialog.setTargetFragment(this, CREATE_NEW_MAIN_ITEM);
-                instanceMainDialog.show(getActivity().getSupportFragmentManager(), MainItemDialog.TAG);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                mainActivity.createFragment(instanceMainDialog);
+               // instanceMainDialog.show(getActivity().getSupportFragmentManager(), MainItemDialog.TAG);
                 break;
         }
     }
