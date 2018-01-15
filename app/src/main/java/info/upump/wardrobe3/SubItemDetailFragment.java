@@ -62,7 +62,7 @@ public class SubItemDetailFragment extends Fragment implements View.OnClickListe
                 subItem = new SubItem();
                 subItem.setId(cursor.getInt(0));
                 subItem.setName(cursor.getString(1));
-                subItem.setImg(cursor.getString(2));
+                subItem.setImgUriToString(cursor.getString(2));
                 subItem.setCost(cursor.getFloat(3));
                 // TODO дату вписать
                 subItem.setIdMainItem(cursor.getLong(4));

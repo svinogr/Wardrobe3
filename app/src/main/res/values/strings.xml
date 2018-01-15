@@ -27,4 +27,6 @@
     <string name="menu_drawer_dressing">Примерочная</string>
     <string name="navigation_bottom_item_previw">превью</string>
     <string name="navigation_bottom_item_xz">хз пока</string>
+    <string name="name_mask_tshort">футболки</string>
+    <string name="name_mask_paints">штаны</string>
 </resources>

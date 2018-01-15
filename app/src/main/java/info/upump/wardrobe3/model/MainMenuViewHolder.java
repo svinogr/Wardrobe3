@@ -23,9 +23,9 @@ public class MainMenuViewHolder extends RecyclerView.ViewHolder {
         image = itemView.findViewById(R.id.recycled_image_item);
 
     }
-    public void bind(MainMenuItem mainMenuItem){
-        name.setText(mainMenuItem.name);
-        image.setImageBitmap(null);
+    public void bind(MenuItemContainer mainMenuItem){
+        name.setText(mainMenuItem.getItemMenu().getName());
+        image.setImageBitmap(mainMenuItem.getItemMenuImage());
     }
 
 

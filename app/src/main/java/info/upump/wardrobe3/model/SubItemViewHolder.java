@@ -71,11 +71,11 @@ public class SubItemViewHolder extends RecyclerView.ViewHolder  implements View.
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
         try {
             Bitmap bitmap;
-            if (subItem.getImg() != null) {
+            if (subItem.getImgUriToString() != null) {
                 //получаем картинку из URI и приводим ее к нужному размеру для кардвью
 
                 try {
-                    Uri uriImg = Uri.parse(subItem.getImg());
+                    Uri uriImg = Uri.parse(subItem.getImgUriToString());
                     System.out.println(uriImg);
 
                     System.out.println("razr " + context.getApplicationContext().checkCallingPermission(Manifest.permission.READ_EXTERNAL_STORAGE));

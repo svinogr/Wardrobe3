@@ -34,6 +34,7 @@ import java.util.Map;
 
 import info.upump.wardrobe3.dialog.Constants;
 import info.upump.wardrobe3.dialog.MainItemDialog;
+import info.upump.wardrobe3.dialog.MainItemFragment;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.model.MainMenuItem;
@@ -209,7 +210,9 @@ public class MainActivity extends AppCompatActivity
         //TODO условие для планшета
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        fragmentTransaction.addToBackStack(null);
+        if(!(fragment instanceof MainFragment)) {
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.replace(R.id.mainContainer, fragment);
         fragmentTransaction.commitAllowingStateLoss();
     }

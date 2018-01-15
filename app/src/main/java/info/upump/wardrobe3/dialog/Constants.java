@@ -6,7 +6,7 @@ package info.upump.wardrobe3.dialog;
 
 public interface Constants {
     public static final String NAME= "name";
-    public static final String IMG= "img";
+    public static final String IMG= "imgUriToString";
     public static final String ID= "id";
     public final static String COST = "cost";
     public final static String DATE = "date";

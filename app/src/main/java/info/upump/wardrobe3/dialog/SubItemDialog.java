@@ -131,7 +131,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         bundle.putString(Constants.NAME,subItem.getName());
         bundle.putFloat(Constants.COST,subItem.getCost());
         bundle.putString(Constants.DESCRIPTION,subItem.getDescription());
-        bundle.putString(Constants.IMG,subItem.getImg());
+        bundle.putString(Constants.IMG,subItem.getImgUriToString());
         SubItemDialog subItemDialog = new SubItemDialog();
         subItemDialog.setArguments(bundle);
         return subItemDialog;
@@ -170,8 +170,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                 subItemFromBD.setId(byId.getInt(0));
                 subItemFromBD.setName(byId.getString(1));
                 if (uri == null) {
-                    subItemFromBD.setImg((byId.getString(2)));
-                } else subItemFromBD.setImg(uri.toString());
+                    subItemFromBD.setImgUriToString((byId.getString(2)));
+                } else subItemFromBD.setImgUriToString(uri.toString());
                 subItemFromBD.setCost(byId.getFloat(3));
                 subItemFromBD.setDescription(byId.getString(5));
                 // TODO дату вписать
@@ -182,8 +182,8 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
         name.setText(subItemFromBD.getName());
         cost.setText(String.valueOf(subItemFromBD.getCost()));
         description.setText(subItemFromBD.getDescription());
-        if (subItemFromBD.getImg() != null) {
-            image.setImageURI(Uri.parse(subItemFromBD.getImg()));
+        if (subItemFromBD.getImgUriToString() != null) {
+            image.setImageURI(Uri.parse(subItemFromBD.getImgUriToString()));
         }
 
         id = subItemFromBD.getId();
@@ -209,7 +209,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                         }
 
                         subItemToDB.setDescription(description.getText().toString());
-                        subItemToDB.setImg(uri.toString());
+                        subItemToDB.setImgUriToString(uri.toString());
 
                         if (viewFragmentControllerCallback != null) {
                             System.out.println(viewFragmentControllerCallback);
@@ -255,7 +255,7 @@ public class SubItemDialog extends DialogFragment implements View.OnClickListene
                         }
                         subItemToDB.setDescription(description.getText().toString());
                         if (uri != null) {
-                            subItemToDB.setImg(uri.toString());
+                            subItemToDB.setImgUriToString(uri.toString());
                         }
                         if (viewFragmentControllerCallback != null) {
                             viewFragmentControllerCallback.addNewItem(subItemToDB);

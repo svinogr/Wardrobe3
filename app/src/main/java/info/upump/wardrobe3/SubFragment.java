@@ -26,6 +26,7 @@ import info.upump.wardrobe3.dialog.SubItemDialog;
 import info.upump.wardrobe3.dialog.SubItemOperationAsync;
 import info.upump.wardrobe3.loader.LoaderSubItem;
 import info.upump.wardrobe3.model.EnumMask;
+import info.upump.wardrobe3.model.IItem;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
 
@@ -133,7 +134,7 @@ public class SubFragment extends Fragment implements ViewFragmentControllerCallb
                 for (SubItem m : subItemList) {
                     if (m.getId() == object.getId()) {
                         m.setName(object.getName());
-                        m.setImg(object.getImg());
+                        m.setImgUriToString(object.getImgUriToString());
                         index = subItemList.indexOf(m);
                         subItemAdapter.notifyItemChanged(index);
                         break;
@@ -234,7 +235,7 @@ public class SubFragment extends Fragment implements ViewFragmentControllerCallb
         bundle.putString(Constants.NAME, subItem.getName());
         bundle.putFloat(Constants.COST, subItem.getCost());
         bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
-        bundle.putString(Constants.IMG, subItem.getImg());
+        bundle.putString(Constants.IMG, subItem.getImgUriToString());
 
         SubItemDialog dialogFragment = new SubItemDialog();
         dialogFragment.setArguments(bundle);
@@ -330,7 +331,7 @@ public class SubFragment extends Fragment implements ViewFragmentControllerCallb
     public long getIdParent() {
         return idParent;
     }
-    public static SubFragment getInstanceSubFragment(MainMenuItem mainMenuItem){
+    public static SubFragment getInstanceSubFragment(IItem mainMenuItem){
         Bundle bundle = new Bundle();
         bundle.putLong(Constants.ID,mainMenuItem.getId());
         bundle.putInt(Constants.MASK,mainMenuItem.getEnumMask().ordinal());

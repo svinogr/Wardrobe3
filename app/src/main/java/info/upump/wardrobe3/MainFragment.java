@@ -27,7 +27,9 @@ import info.upump.wardrobe3.dialog.MainItemFragment;
 import info.upump.wardrobe3.dialog.MainItemOperationAsync;
 import info.upump.wardrobe3.dialog.OperationAsync;
 import info.upump.wardrobe3.loader.LoaderMainMenu;
+import info.upump.wardrobe3.mask.PicCreator;
 import info.upump.wardrobe3.model.MainMenuItem;
+import info.upump.wardrobe3.model.MenuItemContainer;
 
 /**
  * Created by explo on 26.10.2017.
@@ -56,6 +58,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         floatingActionButton.setOnClickListener(this);
 
         LinearLayoutManager linearLayoutManagerForRecycledView = new LinearLayoutManager(getContext());
+
+
 
         mainAdapter = new MainAdapter(mainMenuItemList, getActivity());
 

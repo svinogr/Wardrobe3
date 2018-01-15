@@ -1,6 +1,7 @@
 package info.upump.wardrobe3.adapter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,8 +17,10 @@ import info.upump.wardrobe3.MainActivity;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.SubFragment;
 import info.upump.wardrobe3.dialog.Constants;
+import info.upump.wardrobe3.mask.PicCreator;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.MainMenuViewHolder;
+import info.upump.wardrobe3.model.MenuItemContainer;
 
 /**
  * Created by explo on 29.10.2017.
@@ -25,17 +28,11 @@ import info.upump.wardrobe3.model.MainMenuViewHolder;
 
 public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     private List<MainMenuItem> mainMenuItemList;
-    private MainMenuViewHolder mHolder;
-    private Activity activity;
-    private FragmentController fragmentController;
+    private Context context;
 
-
-    public MainAdapter(List<MainMenuItem> mainMenuItemList, Activity activity) {
+    public MainAdapter(List<MainMenuItem> mainMenuItemList, Context context) {
         this.mainMenuItemList = mainMenuItemList;
-        this.activity = activity;
-        if (activity instanceof FragmentController) {
-            fragmentController = (FragmentController) activity;
-        }
+        this.context = context;
     }
 
     @Override
@@ -45,35 +42,20 @@ public class MainAdapter extends RecyclerView.Adapter<MainMenuViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MainMenuViewHolder holder, int position) {
-        final MainMenuItem mainMenuItem = mainMenuItemList.get(position);
-
-      /*  final long id = mainMenuItemList.get(position).getId();
-        final int resourceMask = mainMenuItemList.get(position).getEnumMask().ordinal();
-        final String name = mainMenuItemList.get(position).getName();*/
-        holder.bind(mainMenuItem);
-        holder.name.setText(mainMenuItemList.get(position).getName());
-
+    public void onBindViewHolder(MainMenuViewHolder holder, final int position) {
+        PicCreator picCreator = new PicCreator(context);
+        holder.bind(new MenuItemContainer(mainMenuItemList.get(position),picCreator.getSimpleMaskBitmap(mainMenuItemList.get(position).getEnumMask())));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MainMenuItem mainMenuItem = mainMenuItemList.get(position);
                 SubFragment subFragment = SubFragment.getInstanceSubFragment(mainMenuItem);
-                ((MainActivity) activity).createFragment(subFragment);
-               /* Bundle bundle = new Bundle();
-                System.out.println("v adaotere if " + id);
-                bundle.putLong(Constants.ID_PARENT, id);
-                bundle.putString(Constants.NAME, name);
-                bundle.putInt(Constants.MASK, resourceMask);
-
-                SubFragment fragment = new SubFragment();
-                fragment.setArguments(bundle);
-                fragmentController.setCurrentFragment(fragment);
-                System.out.println(fragment.getTag());*/
-
+                if(context instanceof MainActivity) {
+                    ((MainActivity) context).createFragment(subFragment);
+                }
             }
         });
-
 
     }
 

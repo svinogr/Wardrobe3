@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import info.upump.wardrobe3.R;
 import info.upump.wardrobe3.adapter.MainAdapter;
 import info.upump.wardrobe3.adapter.MaskAdapter;
+import info.upump.wardrobe3.mask.PicCreator;
 import info.upump.wardrobe3.model.EnumMask;
 import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.Mask;
@@ -30,6 +32,7 @@ import info.upump.wardrobe3.model.Mask;
 public class MainItemFragment extends Fragment {
     private EditText nameEditText;
     private RecyclerView recyclerView;
+    private TextView nameTextView;
     private FloatingActionButton floatingActionButton;
 
     @Nullable
@@ -38,6 +41,7 @@ public class MainItemFragment extends Fragment {
         super.onCreate(savedInstanceState);
         View root = inflater.inflate(R.layout.main_item_detail_fragment,container,false);
         nameEditText = root.findViewById(R.id.main_item_detail_edit_text);
+        nameTextView = root.findViewById(R.id.main_item_detail_text_view);
         recyclerView = root.findViewById(R.id.main_item_detail_recycled);
         floatingActionButton = root.findViewById(R.id.main_item_detail_fab);
 
@@ -45,17 +49,17 @@ public class MainItemFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManagerForRecycledView);
         ///
         List<Mask> testList = new ArrayList<>();
+        PicCreator picCreator = new PicCreator(getContext());
         for(int i = 0; i<3; i++ ) {
             for (EnumMask enumMask : EnumMask.values()) {
-                Mask mask = new Mask(Bitmap.createScaledBitmap(Bitmap.createBitmap(
-                        BitmapFactory.decodeResource(getContext().getResources(), enumMask.getResource())), 300, 300, false), enumMask.getVisibleName());
+                Mask mask = new Mask(picCreator.getSimpleMaskBitmap(enumMask),getResources().getString(enumMask.getVisibleName()));
                 testList.add(mask);
             }
         }
 
         ///
         System.out.println(testList.size());
-        MaskAdapter maskAdapter = new MaskAdapter(testList);
+        MaskAdapter maskAdapter = new MaskAdapter(testList,nameTextView);
         recyclerView.setAdapter(maskAdapter);
 
 
@@ -69,7 +73,7 @@ public class MainItemFragment extends Fragment {
         if (mainMenuItem != null) {
             bundle.putLong(Constants.ID, mainMenuItem.getId());
             bundle.putString(Constants.NAME, mainMenuItem.getName());
-            // bundle.putString(Constants.IMG, mainMenuItem.getImg()); TODO включить в случае реализации индивидуальной картинки
+            // bundle.putString(Constants.IMG, mainMenuItem.getImgUriToString()); TODO включить в случае реализации индивидуальной картинки
         }
         mainItemFragment.setArguments(bundle);
         return mainItemFragment;

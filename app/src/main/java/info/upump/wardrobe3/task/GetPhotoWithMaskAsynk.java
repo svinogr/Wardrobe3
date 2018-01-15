@@ -41,8 +41,8 @@ public class GetPhotoWithMaskAsynk extends AsyncTask<Integer,Void, Drawable> {
     protected Drawable doInBackground(Integer... params) {
         MaskedDrawable  drawable = new MaskedDrawablePorterDuffDstIn();
         drawable.setMaskBitmap(bitmapMask);
-        if (subItems.get(params[0]).getImg() != null) {
-            Uri uri = Uri.parse(subItems.get(params[0]).getImg());
+        if (subItems.get(params[0]).getImgUriToString() != null) {
+            Uri uri = Uri.parse(subItems.get(params[0]).getImgUriToString());
 
 
             System.out.println(params[0]);

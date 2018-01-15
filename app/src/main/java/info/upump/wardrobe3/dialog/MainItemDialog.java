@@ -53,7 +53,7 @@ public class MainItemDialog extends DialogFragment {
         if (mainMenuItem != null) {
             bundle.putLong(Constants.ID, mainMenuItem.getId());
             bundle.putString(Constants.NAME, mainMenuItem.getName());
-           // bundle.putString(Constants.IMG, mainMenuItem.getImg()); TODO включить в случае реализации индивидуальной картинки
+           // bundle.putString(Constants.IMG, mainMenuItem.getImgUriToString()); TODO включить в случае реализации индивидуальной картинки
         }
         mainItemDialog.setArguments(bundle);
         return mainItemDialog;

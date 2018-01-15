@@ -1,5 +1,7 @@
 package info.upump.wardrobe3.model;
 
+import android.content.res.Resources;
+
 import info.upump.wardrobe3.R;
 
 /**
@@ -8,22 +10,25 @@ import info.upump.wardrobe3.R;
 
 public enum EnumMask {
     TSHORT(R.drawable.mask_circle){
-        String name = "футболки";
+
+        int name = R.string.name_mask_tshort;
 
         @Override
-       public String getVisibleName() {
+       public int getVisibleName() {
             return name;
         }
     },
     PANTS(R.drawable.mask1){
-        String name = "штаны";
+        int name = R.string.name_mask_paints;
         @Override
-        public String getVisibleName() {
+        public int getVisibleName() {
             return name;
         }
     };
+    
     private int resource;
-    public abstract String getVisibleName();
+
+    public abstract int getVisibleName();
 
 
     EnumMask(int resource) {

@@ -49,7 +49,7 @@ public class SubItemAdapter extends RecyclerView.Adapter<SubItemViewHolder> {
                 bundle.putString(Constants.NAME, subItem.getName());
                 bundle.putFloat(Constants.COST, subItem.getCost());
                 bundle.putString(Constants.DESCRIPTION, subItem.getDescription());
-                bundle.putString(Constants.IMG, subItem.getImg());
+                bundle.putString(Constants.IMG, subItem.getImgUriToString());
 
                 SubItemDialog dialogFragment = new SubItemDialog();
                 dialogFragment.setArguments(bundle);

@@ -34,7 +34,7 @@ public class LoaderMainMenu extends AsyncTaskLoader<List<MainMenuItem>> {
                 mainMenuItem = new MainMenuItem();
                 mainMenuItem.setId(cursor.getInt(0));
                 mainMenuItem.setName(cursor.getString(1));
-                mainMenuItem.setImg(cursor.getString(2));
+                mainMenuItem.setImgUriToString(cursor.getString(2));
                 mainMenuItem.setEnumMask(EnumMask.values()[cursor.getInt(3)]);
 
                 list.add(mainMenuItem);

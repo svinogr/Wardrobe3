@@ -12,7 +12,6 @@
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:elevation="10dp"
-
         app:cardCornerRadius="7dp"
         tools:layout_constraintTop_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -32,7 +31,6 @@
 
         <ImageView
             android:id="@+id/recycled_image_item"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 

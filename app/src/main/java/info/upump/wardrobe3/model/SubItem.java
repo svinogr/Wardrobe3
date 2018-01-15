@@ -14,7 +14,7 @@ public class SubItem extends MainMenuItem {
 
     public SubItem() {
     }
-
+    @Override
     public float getCost() {
         return cost;
     }
@@ -22,7 +22,7 @@ public class SubItem extends MainMenuItem {
     public void setCost(float cost) {
         this.cost = cost;
     }
-
+    @Override
     public Date getDate() {
         return date;
     }
@@ -30,7 +30,7 @@ public class SubItem extends MainMenuItem {
     public void setDate(Date date) {
         this.date = date;
     }
-
+    @Override
     public long getIdMainItem() {
         return idMainItem;
     }
@@ -38,7 +38,7 @@ public class SubItem extends MainMenuItem {
     public void setIdMainItem(long idMainItem) {
         this.idMainItem = idMainItem;
     }
-
+    @Override
     public String getDescription() {
         return description;
     }

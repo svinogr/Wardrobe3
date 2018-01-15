@@ -3,9 +3,7 @@ package info.upump.wardrobe3.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 
-import info.upump.wardrobe3.model.MainMenuItem;
 import info.upump.wardrobe3.model.SubItem;
 
 /**
@@ -21,7 +19,7 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
     public Long save(SubItem item) {
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());
@@ -45,8 +43,8 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
     @Override
     public Long delete(SubItem item) {
        /* Uri uri;
-        if(item.getImg()!=null) {
-            uri = Uri.parse(item.getImg());
+        if(item.getImgUriToString()!=null) {
+            uri = Uri.parse(item.getImgUriToString());
             context.getContentResolver().delete(uri, null, null);
         }*/
 
@@ -58,7 +56,7 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
         System.out.println(" update db sub"+ item.getId());
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());
@@ -69,7 +67,7 @@ public class SubItemTableDao extends DBDao implements DataBasicOperation<SubItem
     public Long insertWithManualId(SubItem item) {
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_COST, item.getCost());
         cv.put(DataBaseHelper.TABLE_KEY_DESCRIPTION, item.getDescription());
         cv.put(DataBaseHelper.TABLE_KEY_ID_MAIN, item.getIdMainItem());

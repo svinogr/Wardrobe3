@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 
 import info.upump.wardrobe3.model.MainMenuItem;
-import info.upump.wardrobe3.model.SubItem;
 
 /**
  * Created by explo on 26.10.2017.
@@ -22,7 +21,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
     public Long save(MainMenuItem item) {
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
         System.out.println("сохраняю главное меню");
         return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
@@ -61,7 +60,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
     public Long update(MainMenuItem item) {
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
 
       return (long) database.update(DataBaseHelper.TABLE_MAIN_MENU, cv, DataBaseHelper.TABLE_KEY_ID + "=" + item.getId(), null);
@@ -74,7 +73,7 @@ public class MainTableDao extends DBDao implements DataBasicOperation<MainMenuIt
         ContentValues cv = new ContentValues();
         cv.put(DataBaseHelper.TABLE_KEY_ID, item.getId());
         cv.put(DataBaseHelper.TABLE_KEY_NAME, item.getName() );
-        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImg());
+        cv.put(DataBaseHelper.TABLE_KEY_IMG, item.getImgUriToString());
         cv.put(DataBaseHelper.TABLE_KEY_MASK, item.getEnumMask().ordinal());
       return database.insert(DataBaseHelper.TABLE_MAIN_MENU, null, cv);
 
